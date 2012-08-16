@@ -21,37 +21,37 @@ def parse(data):
     doc = etree.fromstring(data.encode('utf-8'))
     for ap_el in doc.findall('.//' + NS + 'accreditedPerson'):
         ap = {
-            'orgIdentificationCode': ap_el.findtext(NS + 'orgIdentificationCode'),
-            'numberOfIR': ap_el.findtext(NS + 'numberOfIR'),
-            'orgName': ap_el.findtext(NS + 'orgName'),
+            'org_identification_code': ap_el.findtext(NS + 'orgIdentificationCode'),
+            'number_of_ir': ap_el.findtext(NS + 'numberOfIR'),
+            'org_name': ap_el.findtext(NS + 'orgName'),
             'title': ap_el.findtext(NS + 'title'),
-            'firstName': ap_el.findtext(NS + 'firstName'),
-            'lastName': ap_el.findtext(NS + 'lastName'),
-            'accreditationStartDate': dateconv(ap_el.findtext(NS + 'accreditationStartDate')),
-            'accreditationEndDate': dateconv(ap_el.findtext(NS + 'accreditationEndDate')),
+            'first_name': ap_el.findtext(NS + 'firstName'),
+            'last_name': ap_el.findtext(NS + 'lastName'),
+            'start_date': dateconv(ap_el.findtext(NS + 'accreditationStartDate')),
+            'end_date': dateconv(ap_el.findtext(NS + 'accreditationEndDate')),
             }
         yield ap
 
 def save(person, engine):
     table = sl.get_table(engine, 'person')
     orgs = list(sl.find(engine, sl.get_table(engine, 'representative'),
-                   identificationCode=person['orgIdentificationCode']))
+                   identification_code=person['org_identification_code']))
     if len(orgs):
-        org = max(orgs, key=lambda o: o['lastUpdateDate'])
-        person['representativeEtlId'] = org['etlId']
+        org = max(orgs, key=lambda o: o['last_update_date'])
+        person['representative_etl_id'] = org['etlId']
         person['role'] = 'accredited'
         name = '%s %s %s' % (person['title'] or '',
-                             person['firstName'],
-                             person['lastName'])
+                             person['first_name'],
+                             person['last_name'])
         person['name'] = name.strip()
         log.debug("Accreditation: %s", name)
         sl.upsert(engine, table, person,
-            ['representativeEtlId', 'role', 'name'])
+            ['representative_etl_id', 'role', 'name'])
     else:
         log.warn("Cannot associate with a registered interest: %r", person)
 
 def extract_data(engine, data):
-    log.info("Extracting accredditation data from %s", data)
+    log.info("Extracting accredditation data...")
     for i, ap in enumerate(parse(data)):
         save(ap, engine)
         if i % 100 == 0:

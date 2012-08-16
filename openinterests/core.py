@@ -12,6 +12,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from openinterests import default_settings
 
 logging.basicConfig(level=logging.INFO)
+logging.getLogger('sqlaload').setLevel(level=logging.WARN)
+logging.getLogger('requests').setLevel(level=logging.WARN)
 
 app = Flask(__name__)
 app.config.from_object(default_settings)
