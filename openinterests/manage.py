@@ -9,6 +9,9 @@ manager = Manager(app)
 def createdb():
     """ Create the SQLAlchemy database. """
     db.create_all()
+
+
+def goldfish():
     org = Organisation.create({'name': "BLA"})
     id = org.id
     print org

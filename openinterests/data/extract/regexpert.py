@@ -133,8 +133,8 @@ def save_member(engine, etlId, member):
             del data['subgroup_status']
         for policy_area in data.pop('policy_area', []):
             sl.upsert(engine, sl.get_table(engine, 'expertgroup_member_policy_area'),
-                    {'expertgroup_etl_ed': etlId, 'member': data['name'],
-                     'policy_area': poiicy_area, 'subgroup': data['subgroup']},
+                    {'expertgroup_etl_id': etlId, 'member': data['name'],
+                     'policy_area': policy_area, 'subgroup': data['subgroup']},
                     ['expertgroup_etl_id', 'policy_area', 'member', 'subgroup'])
         for country in data.pop('countries/area_represented',
             data.pop('countries/areas_represented', [])):

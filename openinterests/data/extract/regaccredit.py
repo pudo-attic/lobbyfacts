@@ -38,11 +38,11 @@ def save(person, engine):
                    identification_code=person['org_identification_code']))
     if len(orgs):
         org = max(orgs, key=lambda o: o['last_update_date'])
-        person['representative_etl_id'] = org['etlId']
+        person['representative_etl_id'] = org['etl_id']
         person['role'] = 'accredited'
         name = '%s %s %s' % (person['title'] or '',
-                             person['first_name'],
-                             person['last_name'])
+                             person['first_name'] or '',
+                             person['last_name'] or '')
         person['name'] = name.strip()
         log.debug("Accreditation: %s", name)
         sl.upsert(engine, table, person,

@@ -1,6 +1,7 @@
+from datetime import datetime
+
 from openinterests.core import db
 from openinterests.model.util import make_serial, make_id
-
 
 class RevisionedMixIn(object):
     """ Simple versioning system for the database graph objects.
@@ -8,6 +9,11 @@ class RevisionedMixIn(object):
     differing in their serial number. Additionally, a ``current``
     flag is used to flag that revision of a given edge or node
     that should currently be used. """
+
+    id = db.Column(db.String(36), primary_key=True, default=make_id)
+    serial = db.Column(db.BigInteger, primary_key=True, default=make_serial)
+    current = db.Column(db.Boolean)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     @classmethod
     def create(cls, data):
@@ -62,12 +68,27 @@ class RevisionedMixIn(object):
         q = q.values({'current': False})
         db.session.execute(q)
 
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'serial': self.serial,
+            'current': self.current,
+            'created_at': self.created_at
+            }
+
     @property
     def history(self):
         q = db.session.query(self.__class__)
         q = q.filter_by(id=self.id)
         q = q.order_by(self.__class__.created_at.asc())
         return q
+
+    @classmethod
+    def by_attr(cls, attr, value):
+        q = db.session.query(cls)
+        q = q.filter_by(current=True)
+        q = q.filter(attr==value)
+        return q.first()
 
     @classmethod
     def by_id(cls, id):

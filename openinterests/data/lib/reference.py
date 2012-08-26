@@ -16,8 +16,9 @@ def clean_value(value):
     return value
 
 def get_dataset(dataset):
+    global DATASET_CACHE
     if dataset not in DATASET_CACHE:
-        DATASET_CACHE = NKDataset(dataset,
+        DATASET_CACHE[dataset] = NKDataset(dataset,
             host=app.config.get('NOMENKLATURA_URL'),
             api_key=app.config.get('NOMENKLATURA_APIKEY'))
     return DATASET_CACHE[dataset]
