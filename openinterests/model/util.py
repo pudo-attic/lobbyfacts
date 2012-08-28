@@ -9,7 +9,7 @@ from sqlalchemy.types import Text, MutableType, TypeDecorator, \
 
 
 def make_id():
-    return unicode(uuid4())
+    return unicode(uuid4().hex)
 
 
 def make_serial():

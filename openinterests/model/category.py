@@ -2,8 +2,9 @@ from datetime import datetime
 
 from openinterests.core import db
 from openinterests.model import util
+from openinterests.model.api import ApiEntityMixIn
 
-class Category(db.Model):
+class Category(db.Model, ApiEntityMixIn):
     __tablename__ = 'category'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -17,13 +18,16 @@ class Category(db.Model):
 
     main_reps = db.relationship('Representative', 
             primaryjoin='Representative.main_category_id==Category.id',
+            lazy='dynamic',
             backref='main_category')
 
     sub_reps = db.relationship('Representative', 
             primaryjoin='Representative.sub_category_id==Category.id',
+            lazy='dynamic',
             backref='sub_category')
 
     children = db.relationship('Category',
+            lazy='dynamic',
             backref=db.backref('parent', remote_side=[id]))
 
     @classmethod

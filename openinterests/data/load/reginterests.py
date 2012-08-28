@@ -3,7 +3,10 @@ from pprint import pprint
 
 from openinterests.core import db
 from openinterests.data import sl, etl_engine
-from openinterests.model import Entity, Representative, Country, Category, Person, Accreditation, FinancialData, FinancialTurnover
+from openinterests.model import Entity, Representative, Country, Category
+from openinterests.model import Organisation, OrganisationMembership, Person
+from openinterests.model import Accreditation, FinancialData, FinancialTurnover
+from openinterests.model import CountryMembership
 from openinterests.data.lib.countries import get_countries
 
 log = logging.getLogger(__name__)
@@ -42,6 +45,16 @@ def upsert_person(data):
     else:
         person.update(data)
     return person
+
+def upsert_organisation(data):
+    entity = upsert_entity(data.get('canonical_name'), data.get('name'))
+    data['entity'] = entity
+    organisation = Organisation.by_name(entity.name)
+    if organisation is None:
+        organisation = Organisation.create(data)
+    else:
+        organisation.update(data)
+    return organisation
 
 def upsert_category(id, name, parent=None):
     data = {'id': id, 'name': name, 'parent': parent}
@@ -141,6 +154,8 @@ def load_representative(engine, rep):
 
         for turnover_ in sl.find(engine, sl.get_table(engine, 'financial_data_turnover'),
                 financial_data_etl_id=fd['etl_id']):
+            if turnover_.get('etl_clean') is False:
+                continue
             turnover_['entity'] = upsert_entity(turnover_.get('canonical_name'),
                                                 turnover_.get('name'))
             turnover_['financial_data'] = financial_data
@@ -151,6 +166,31 @@ def load_representative(engine, rep):
                 turnover = FinancialTurnover.create(turnover_)
             else:
                 turnover.update(turnover_)
+
+    for org in sl.find(engine, sl.get_table(engine, 'organisation'),
+            representative_etl_id=rep['etl_id']):
+        if org.get('etl_clean') is False:
+            continue
+        org['number_of_members'] = to_integer(org['number_of_members'])
+        organisation = upsert_organisation(org)
+        omdata = {'representative': representative, 'organisation': organisation}
+        om = OrganisationMembership.by_rpo(representative, organisation)
+        if om is None:
+            om = OrganisationMembership.create(omdata)
+        else:
+            om.update(omdata)
+
+    for country_ in sl.find(engine, sl.get_table(engine, 'country_of_member'),
+            representative_etl_id=rep['etl_id']):
+        if country_.get('etl_clean') is False:
+            continue
+        cdata = {'representative': representative,
+                 'country': Country.by_code(country_.get('country_code'))}
+        cm = CountryMembership.by_rpc(representative, cdata.get('country'))
+        if cm is None:
+            cm = CountryMembership.create(cdata)
+        else:
+            cm.update(cdata)
 
     db.session.commit()
 

@@ -1,9 +1,10 @@
 from openinterests.core import db
+from openinterests.model.api import ApiEntityMixIn
 from openinterests.model.revision import RevisionedMixIn
 from openinterests.model.entity import Entity
 from openinterests.model.representative import Representative
 
-class FinancialData(db.Model, RevisionedMixIn):
+class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'financial_data'
 
     representative_id = db.Column(db.String(36), db.ForeignKey('representative.id'))
@@ -72,6 +73,7 @@ Representative.financial_datas = db.relationship(FinancialData,
             primaryjoin=db.and_(Representative.id==FinancialData.representative_id,
                                 FinancialData.current==True),
             foreign_keys=[Representative.id],
+            lazy='dynamic',
             backref=db.backref('representative',
                 uselist=False,
                 primaryjoin=db.and_(Representative.id==FinancialData.representative_id,
@@ -79,7 +81,7 @@ Representative.financial_datas = db.relationship(FinancialData,
                 ))
 
 
-class FinancialTurnover(db.Model, RevisionedMixIn):
+class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'financial_turnover'
 
     financial_data_id = db.Column(db.String(36), db.ForeignKey('financial_data.id'))
@@ -111,6 +113,7 @@ FinancialData.turnovers = db.relationship('FinancialTurnover',
             primaryjoin=db.and_(FinancialTurnover.financial_data_id==FinancialData.id,
                                 FinancialTurnover.current==True),
             foreign_keys=[FinancialData.id],
+            lazy='dynamic',
             backref=db.backref('financial_data',
                 uselist=False,
                 primaryjoin=db.and_(FinancialTurnover.financial_data_id==FinancialData.id,
@@ -122,6 +125,7 @@ Entity.turnovers = db.relationship('FinancialTurnover',
             primaryjoin=db.and_(FinancialTurnover.entity_id==Entity.id,
                                 FinancialTurnover.current==True),
             foreign_keys=[Entity.id],
+            lazy='dynamic',
             backref=db.backref('entity',
                 uselist=False,
                 primaryjoin=db.and_(FinancialTurnover.entity_id==Entity.id,

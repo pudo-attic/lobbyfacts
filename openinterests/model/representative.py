@@ -1,8 +1,9 @@
 from openinterests.core import db
+from openinterests.model.api import ApiEntityMixIn
 from openinterests.model.revision import RevisionedMixIn
 from openinterests.model.entity import Entity
 
-class Representative(db.Model, RevisionedMixIn):
+class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'representative'
 
     entity_id = db.Column(db.String(36), db.ForeignKey('entity.id'))

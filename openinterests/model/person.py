@@ -1,9 +1,10 @@
 from openinterests.core import db
+from openinterests.model.api import ApiEntityMixIn
 from openinterests.model.revision import RevisionedMixIn
 from openinterests.model.entity import Entity
 from openinterests.model.representative import Representative
 
-class Person(db.Model, RevisionedMixIn):
+class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'person'
 
     entity_id = db.Column(db.String(36), db.ForeignKey('entity.id'))
@@ -45,6 +46,7 @@ Person.representatives_head = db.relationship('Representative',
             primaryjoin=db.and_(Representative.head_id==Person.id,
                                 Representative.current==True),
             foreign_keys=[Person.id],
+            lazy='dynamic',
             backref=db.backref('head',
                 uselist=False,
                 primaryjoin=db.and_(Representative.head_id==Person.id,
@@ -56,6 +58,7 @@ Person.representatives_legal = db.relationship('Representative',
             primaryjoin=db.and_(Representative.legal_id==Person.id,
                                 Representative.current==True),
             foreign_keys=[Person.id],
+            lazy='dynamic',
             backref=db.backref('legal',
                 uselist=False,
                 primaryjoin=db.and_(Representative.legal_id==Person.id,
@@ -63,7 +66,7 @@ Person.representatives_legal = db.relationship('Representative',
                 ))
 
 
-class Accreditation(db.Model, RevisionedMixIn):
+class Accreditation(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'accreditation'
 
     representative_id = db.Column(db.String(36), db.ForeignKey('representative.id'))
