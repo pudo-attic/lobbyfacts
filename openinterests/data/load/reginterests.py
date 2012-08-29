@@ -146,14 +146,14 @@ def load_representative(engine, rep):
         fd['other_sources_contributions'] = to_integer(fd.get('other_sources_donation'))
         fd['other_sources_total'] = to_integer(fd.get('other_sources_total'))
         fd['representative'] = representative
-        financial_data = FinancialData.by_rsd(representative, fd.get('start_end'))
+        financial_data = FinancialData.by_rsd(representative, fd.get('start_date'))
         if financial_data is None:
             financial_data = FinancialData.create(fd)
         else:
             financial_data.update(fd)
 
         for turnover_ in sl.find(engine, sl.get_table(engine, 'financial_data_turnover'),
-                financial_data_etl_id=fd['etl_id']):
+                representative_etl_id=rep['etl_id'], financial_data_etl_id=fd['etl_id']):
             if turnover_.get('etl_clean') is False:
                 continue
             turnover_['entity'] = upsert_entity(turnover_.get('canonical_name'),
