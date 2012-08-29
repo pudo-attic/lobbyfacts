@@ -65,6 +65,42 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
         q = q.filter(cls.start_date==start_date)
         return q.first()
 
+    def as_shallow(self, turnovers=False):
+        d = super(FinancialData, self).as_dict()
+        d.update({
+            'uri': self.uri,
+            'type': self.type,
+            'start_date': self.start_date,
+            'end_date': self.end_date,
+            'turnover_min': self.turnover_min,
+            'turnover_max': self.turnover_max,
+            'turnover_absolute': self.turnover_absolute,
+            'cost_min': self.cost_min,
+            'cost_max': self.cost_max,
+            'cost_absolute': self.cost_absolute,
+            'direct_rep_costs_min': self.direct_rep_costs_min,
+            'direct_rep_costs_max': self.direct_rep_costs_max,
+            'total_budget': self.total_budget,
+            'public_financing_total': self.public_financing_total,
+            'public_financing_national': self.public_financing_national,
+            'public_financing_infranational': self.public_financing_infranational,
+            'eur_sources_grants': self.eur_sources_grants,
+            'eur_sources_procurement': self.eur_sources_procurement,
+            'other_sources_donation': self.other_sources_donation,
+            'other_sources_contributions': self.other_sources_contributions,
+            'other_sources_total': self.other_sources_total,
+            })
+        if turnovers:
+            d['turnovers'] = [t.as_dict(financial_data=False) for t in self.turnovers]
+        return d
+
+    def as_dict(self):
+        d = self.as_shallow(turnovers=True)
+        d.update({
+            'representative': self.representative.as_shallow() if self.representative else None
+            })
+        return d
+
     def __repr__(self):
         return "<FinancialData(%s,%r)>" % (self.start_date, self.representative)
 
@@ -104,6 +140,19 @@ class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
         q = q.filter(cls.financial_data_id==financial_data.id)
         q = q.filter(cls.entity_id==entity.id)
         return q.first()
+
+    def as_dict(self, financial_data=True, entity=True):
+        d = super(FinancialTurnover, self).as_dict()
+        d.update({
+            'uri': self.uri,
+            'min': self.min,
+            'max': self.max
+            })
+        if financial_data:
+            d['financial_data'] = self.financial_data.as_shallow()
+        if entity:
+            d['entity'] = self.entity.as_shallow()
+        return d
 
     def __repr__(self):
         return "<FinancialTurnover(%r,%r)>" % (self.financial_data, self.entity)

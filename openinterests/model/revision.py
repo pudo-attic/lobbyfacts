@@ -71,8 +71,8 @@ class RevisionedMixIn(object):
     def as_dict(self):
         return {
             'id': self.id,
-            'serial': self.serial,
-            'current': self.current,
+        #    'serial': self.serial,
+        #    'current': self.current,
             'created_at': self.created_at
             }
 

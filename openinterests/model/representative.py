@@ -78,6 +78,49 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
         return cls.by_attr(cls.identitfication_code,
                            identitfication_code)
 
+    def as_shallow(self):
+        d = super(Representative, self).as_dict()
+        d.update({
+            'uri': self.uri,
+            'name': self.entity.name,
+            'identitfication_code': self.identitfication_code,
+            'goals': self.goals,
+            'status': self.status,
+            'activities': self.activities,
+            'networking': self.networking,
+            'code_of_conduct': self.code_of_conduct,
+            'web_site_url': self.web_site_url,
+            'legal_status': self.legal_status,
+            'members': self.members,
+            'number_of_natural_persons': self.number_of_natural_persons,
+            'number_of_organisations': self.number_of_organisations,
+            'registration_date': self.registration_date,
+            'last_update_date': self.last_update_date,
+            'contact_more': self.contact_more,
+            'contact_town': self.contact_town,
+            'contact_number': self.contact_town,
+            'contact_street': self.contact_street,
+            'contact_phone': self.contact_phone,
+            'contact_post_code': self.contact_post_code,
+            'contact_fax': self.contact_fax
+            })
+        return d
+
+    def as_dict(self):
+        d = self.as_shallow()
+        d.update({
+            'entity': self.entity.as_shallow() if self.entity else None,
+            'contact_country': self.contact_country.as_shallow() if self.contact_country else None,
+            'main_category': self.main_category.as_shallow() if self.main_category else None,
+            'sub_category': self.sub_category.as_shallow() if self.sub_category else None,
+            'head': self.head.as_shallow() if self.head else None,
+            'legal': self.legal.as_shallow() if self.legal else None,
+            'financial_data': [fd.as_shallow(turnovers=True) for fd in self.financial_datas],
+            'organisation_memberships': [om.as_dict(representative=False) for om in self.organisation_memberships],
+            'accreditations': [a.as_dict(representative=False) for a in self.accreditations]
+            })
+        return d
+
     def __repr__(self):
         return "<Representative(%s,%r)>" % (self.id, self.entity)
 

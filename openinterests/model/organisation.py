@@ -27,6 +27,23 @@ class Organisation(db.Model, RevisionedMixIn, ApiEntityMixIn):
         q = q.filter(Entity.name==name)
         return q.first()
 
+    def as_shallow(self):
+        d = super(Organisation, self).as_dict()
+        d.update({
+            'uri': self.uri,
+            'name': self.entity.name,
+            'number_of_members': self.number_of_members
+            })
+        return d
+
+    def as_dict(self):
+        d = self.as_shallow()
+        d.update({
+            'entity': self.entity.as_shallow(),
+            'memberships': [m.as_dict(organisation=False) for m in self.memberships]
+            })
+        return d
+
     def __repr__(self):
         return "<Organisation(%s,%r)>" % (self.id, self.entity)
 
@@ -55,6 +72,18 @@ class OrganisationMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
         q = q.filter(cls.representative_id==representative.id)
         q = q.filter(cls.organisation_id==organisation.id)
         return q.first()
+
+    def as_dict(self, organisation=True, representative=True):
+        d = super(OrganisationMembership, self).as_dict()
+        d.update({
+            'uri': self.uri,
+            })
+        if organisation:
+            d['organisation'] = self.organisation.as_shallow()
+        if representative:
+            d['representative'] = self.representative.as_shallow()
+        return d
+
 
     def __repr__(self):
         return "<Organisation(%s,%r)>" % (self.id, self.entity)

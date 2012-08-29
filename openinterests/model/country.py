@@ -38,6 +38,32 @@ class Country(db.Model, ApiEntityMixIn):
         q = q.filter_by(code=code)
         return q.first()
 
+    @classmethod
+    def by_id(cls, id):
+        q = db.session.query(cls)
+        q = q.filter_by(id=id)
+        return q.first()
+
+    @classmethod
+    def all(cls):
+        return db.session.query(cls)
+
+    def as_shallow(self):
+        return {
+            'uri': self.uri,
+            'code': self.code,
+            'name': self.name,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+            }
+
+    def as_dict(self):
+        d = self.as_shallow()
+        #d.update({
+        #    'representatives': self.representatives
+        #    })
+        return d
+
     def __repr__(self):
         return "<Country(%s)>" % (self.code)
 

@@ -44,12 +44,20 @@ class JSONEncoder(json.JSONEncoder):
     """ This encoder will serialize all entities that have a to_dict
     method by calling that method and serializing the result. """
 
+    def __init__(self, shallow=False):
+        self.shallow = shallow
+        super(JSONEncoder, self).__init__()
+
     def encode(self, obj):
-        if hasattr(obj, 'to_dict'):
-            obj = obj.to_dict()
+        #if self.shallow and hasattr(obj, 'as_shallow'):
+        #    return obj.as_shallow()
+        #if hasattr(obj, 'to_dict'):
+        #    obj = obj.to_dict()
         return super(JSONEncoder, self).encode(obj)
 
     def default(self, obj):
+        if self.shallow and hasattr(obj, 'as_shallow'):
+            return obj.as_shallow()
         if hasattr(obj, 'as_dict'):
             return obj.as_dict()
         if isinstance(obj, datetime):
@@ -59,9 +67,9 @@ class JSONEncoder(json.JSONEncoder):
         raise TypeError("%r is not JSON serializable" % obj)
 
 
-def jsonify(obj, status=200, headers=None):
+def jsonify(obj, status=200, headers=None, shallow=False):
     """ Custom JSONificaton to support obj.to_dict protocol. """
-    jsondata = json.dumps(obj, cls=JSONEncoder)
+    jsondata = JSONEncoder(shallow=shallow).encode(obj)
     if 'callback' in request.args:
         jsondata = '%s(%s)' % (request.args.get('callback'), jsondata)
     return Response(jsondata, headers=headers,

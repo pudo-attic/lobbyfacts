@@ -49,7 +49,29 @@ class Category(db.Model, ApiEntityMixIn):
         q = q.filter_by(id=id)
         return q.first()
 
+    @classmethod
+    def all(cls):
+        return db.session.query(cls)
+
+
+    def as_shallow(self):
+        return {
+            'uri': self.uri,
+            'id': self.id,
+            'name': self.name,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+            }
+
+    def as_dict(self):
+        d = self.as_shallow()
+        d.update({
+            'parent': self.parent.as_shallow() if self.parent else None,
+            'children': [c.as_shallow() for c in self.children]
+            })
+        return d
+
     def __repr__(self):
-        return "<Country(%s)>" % (self.id)
+        return "<Category(%s)>" % (self.id)
 
 
