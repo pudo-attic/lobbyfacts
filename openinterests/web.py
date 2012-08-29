@@ -8,17 +8,17 @@ from openinterests.views import *
 
 @app.after_request
 def configure_caching(response_class):
-    if request.method != 'GET' or response_class.status_code > 399:
-        return response_class
-    try:
-        etag, mod_time = validate_cache(request)
-    except NotModified:
-        return Response(status=304)
-    response_class.add_etag(etag)
-    response_class.cache_control.max_age = 21600
-    response_class.cache_control.public = True
-    if mod_time:
-        response_class.last_modified = mod_time
+    if request.method in ['GET', 'HEAD', 'OPTIONS'] \
+        and response_class.status_code < 400:
+        try:
+            etag, mod_time = validate_cache(request)
+            response_class.add_etag(etag)
+            response_class.cache_control.max_age = 84600 * 1
+            response_class.cache_control.public = True
+            if mod_time:
+                response_class.last_modified = mod_time
+        except NotModified:
+            return Response(status=304)
     return response_class
 
 

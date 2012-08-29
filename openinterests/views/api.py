@@ -2,7 +2,7 @@ from flask import Blueprint, request, redirect, url_for
 from flask import render_template, flash
 
 from openinterests.exc import NotFound
-from openinterests.util import jsonify
+from openinterests.util import jsonify, validate_cache
 
 def arg_int(name, default=None):
     try:
@@ -51,6 +51,13 @@ def make_entity_api(cls):
         obj = cls.by_id(id)
         if obj is None:
             return NotFound(id)
+
+        # check this before lazy-loading during serialization
+        for v in ['updated_at', 'created_at']:
+            if hasattr(obj, v):
+                request.cache_key['modified'] = getattr(obj, v)
+        validate_cache(request)
+
         return jsonify(obj)
 
     return api
