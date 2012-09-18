@@ -1,0 +1,136 @@
+
+<style>
+  footer, .visible-desktop, .visible-tablet, .visible-phone, .skeleton {
+    display: none;
+  }
+
+  #text {
+    font-size: 11px;
+    border: 0;
+  }
+
+  #throbber {
+    padding: 10px;
+    position:absolute;
+    left: 45%;
+    top:45%;
+    margin: -50px 0 0 -50px;
+    z-index: 10000;
+    width: 100px;
+    height: 100px;
+  }
+</style>
+
+<div id="throbber"></div>
+
+<div class="skeleton row">
+  <div class="span12">
+    <br/>
+    <h1 id='title'>&nbsp;</h1>
+    <br/>
+    <div class="alert alert-info">Highlight all the entities (organisations, asssociations, networks etc.) mentioned in the text snippet below.</div>
+  </div>
+</div>
+<div class="skeleton row">
+  <div class="span8">
+    <div class="well">
+        <pre id='text'></pre>
+    </div>
+  </div>
+  <div class="span4">
+    <ul id="matches">
+    </ul>
+  </div>
+</div>
+<div class="skeleton row">
+  <div class="span12">
+    <button class="btn btn-large btn-success" id="save">Save these connections</button>
+    <button class="btn btn-large" id="reset">Undo &amp; reset</button>
+  </div>
+</div>
+
+<div id="finish" class="alert alert-success" style="display:none;">
+    <strong>Congratulations!</strong> You have participated in all available tasks!</strong>
+</div>
+
+<script src="/static/js/pybossa/pybossa.js" type="text/javascript"></script>
+<script src="/static/js/throbber/throbber.js" type="text/javascript"></script>
+<script>
+
+var spinner = new Throbber({
+    color: 'black',
+    size: 90
+});
+spinner.appendTo(document.getElementById('throbber'));
+
+function spinnerStart() {
+    $(".skeleton").hide();
+    $("#throbber").show();
+    spinner.start();
+}
+
+function spinnerStop() {
+    spinner.stop()
+    $("#throbber").hide();
+}
+
+
+function fetchTask( task_id ) {
+    var t = $.ajax({
+        url: '/api/task/'+task_id,
+        dataType: 'json'
+    });
+    t.done( function (task) {
+      loadTask(task);
+    });
+}
+
+function loadTask(task) {
+  var matches = [];
+  console.log(task);
+  $('#matches').empty();
+  $('#title').text(task.info.name);
+  $('#text').text(task.info.networking||'');
+  $('#text').unbind('mouseup');
+  $('#text').mouseup(function(e) {
+      var sel = window.getSelection();
+      var match = sel.toString();
+      if (match.length<2) return;
+      matches.push(match);
+      $('#matches').append('<li>' + match + '</li>');
+  });
+  $('#save').unbind('click');
+  $('#save').click(function(e) {
+    console.log(matches);
+    pybossa.saveTask(task.id, matches).done( function( data ) {
+      window.location.pathname = "/app/openinterests-entitymarkup/newtask";
+    });
+  });
+  $('#reset').unbind('click');
+  $('#reset').click(function(e) {
+    matches = [];
+    $('#matches').empty();
+  });
+  spinnerStop();
+  $(".skeleton").show();
+}
+
+spinnerStart();
+var taskId = pybossa.getCurrentTaskId(window.location.pathname);
+if (taskId) {
+  fetchTask(taskId);
+} else {
+  pybossa.newTask("openinterests-entitymarkup").done( function( data ) { 
+    if ( !$.isEmptyObject(data.task) ) {
+      window.location.pathname = "/app/openinterests-entitymarkup/task/" + data.task.id;
+    }
+    else {
+      $(".skeleton").hide();
+      $("#finish").fadeIn();
+    }
+  });
+}
+</script>
+
+
+
