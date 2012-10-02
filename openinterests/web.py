@@ -1,4 +1,4 @@
-from flask import Response, request
+from flask import Response, request, render_template
 from hashlib import sha1
 
 from openinterests.core import app
@@ -8,6 +8,8 @@ from openinterests.views import *
 
 @app.after_request
 def configure_caching(response_class):
+    if not app.config.get('CACHE'):
+        return response_class
     if request.method in ['GET', 'HEAD', 'OPTIONS'] \
         and response_class.status_code < 400:
         try:
@@ -50,6 +52,12 @@ def handle_exceptions(exc):
 @app.errorhandler(NotModified)
 def handle_not_modified(exc):
     return Response(status=304)
+
+
+@app.route('/')
+@app.route('/<path:any>')
+def index(any=''):
+    return render_template('index.tmpl')
 
 
 if __name__ == "__main__":

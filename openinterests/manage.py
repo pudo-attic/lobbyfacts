@@ -2,6 +2,7 @@ from flaskext.script import Manager
 
 from openinterests.core import app, db
 from openinterests.model import *
+from openinterests import web
 
 manager = Manager(app)
 
