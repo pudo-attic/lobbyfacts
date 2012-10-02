@@ -98,7 +98,7 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
             'last_update_date': self.last_update_date,
             'contact_more': self.contact_more,
             'contact_town': self.contact_town,
-            'contact_number': self.contact_town,
+            'contact_number': self.contact_number,
             'contact_street': self.contact_street,
             'contact_phone': self.contact_phone,
             'contact_post_code': self.contact_post_code,
