@@ -1,13 +1,28 @@
 import logging
 from hashlib import sha1
+from itertools import count
+from collections import defaultdict
 
 import pbclient
 
 from openinterests.core import app as flask_app
 from openinterests.data import sl, etl_engine
 
+QUORUM = 1
+
+LIMIT = 500
 
 log = logging.getLogger(__name__)
+
+def _iterate(f, *a, **kwargs):
+    kwargs['limit'] = LIMIT
+    for i in count():
+        kwargs['offset'] = LIMIT * i
+        trs = f(*a, **kwargs)
+        if not len(trs):
+            break
+        for taskrun in trs:
+            yield taskrun
 
 def setup():
     pbclient.set('endpoint', flask_app.config.get('ETL_PYBOSSA_HOST'))
@@ -21,8 +36,7 @@ def create_tasks(engine):
     with flask_app.open_resource('resources/pbnetworks_template.html') as f:
         app.info['task_presenter'] = f.read()
         pbclient.update_app(app)
-    return 
-    tasks = pbclient.get_tasks(app.id, limit=10000)
+    tasks = pbclient.get_tasks(app.id, limit=30000)
     existing = dict([(t.data.get('info').get('signature'), t) for t in tasks])
     for rep in sl.all(engine, sl.get_table(engine, 'representative')):
         networking = rep.get('networking')
@@ -43,10 +57,40 @@ def create_tasks(engine):
         else:
             pbclient.create_task(app.id, rep)
 
-if __name__ == '__main__':
-    engine = etl_engine()
+def flush_taskruns(engine):
+    log.info("Flushing task results from pyBossa...")
+    app = setup()
+    for taskrun in _iterate(pbclient.find_taskruns, app_id=app.id):
+        pbclient.delete_taskrun(taskrun)
+
+def normcmp(a, b):
+    return a.strip().lower() == b.strip().lower()
+
+def fetch_taskruns(engine):
+    log.info("Fetching responses from pyBossa...")
+    net = sl.get_table(engine, 'network_entity')
+    app = setup()
+    results = defaultdict(list)
+    for taskrun in _iterate(pbclient.find_taskruns, app_id=app.id):
+        results[taskrun.info.get('etl_id')].extend(taskrun.info.get('matches'))
+    for etl_id, matches in results.items():
+        uniques = defaultdict(list)
+        for m in matches: 
+            uniques[m.strip().lower()].append(m)
+        for vs in uniques.values():
+            if not len(vs) >= QUORUM:
+                continue
+            sl.upsert(engine, net, {'etl_id': etl_id, 'name': vs[0].strip()},
+                      ['etl_id', 'name'])
+
+def transform(engine):
+    #flush_taskruns(engine)
+    fetch_taskruns(engine)
     create_tasks(engine)
 
+if __name__ == '__main__':
+    engine = etl_engine()
+    transform(engine)
 
 
 

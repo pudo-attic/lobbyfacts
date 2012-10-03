@@ -46,6 +46,7 @@ def transform(engine):
     map_names(names_func, engine, 'person')
     map_names(names_func, engine, 'financial_data_turnover')
     map_names(names_func, engine, 'organisation')
+    map_names(names_func, engine, 'network_entity')
     map_names(names_func, engine, 'expertgroup_member')
 
 

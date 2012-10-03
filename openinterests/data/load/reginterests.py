@@ -7,54 +7,10 @@ from openinterests.model import Entity, Representative, Country, Category
 from openinterests.model import Organisation, OrganisationMembership, Person
 from openinterests.model import Accreditation, FinancialData, FinancialTurnover
 from openinterests.model import CountryMembership
-from openinterests.data.lib.countries import get_countries
+from openinterests.data.load.util import to_integer, upsert_person
+from openinterests.data.load.util import upsert_person, upsert_organisation, upsert_entity
 
 log = logging.getLogger(__name__)
-
-def to_integer(val):
-    if val is None:
-        return None
-    try:
-        return int(float(val))
-    except ValueError:
-        return None
-
-def upsert_entity(canonical_name, name=None, **kw):
-    if canonical_name is None or not len(canonical_name.strip()):
-        canonical_name = name
-    kw['name'] = canonical_name
-    entity = Entity.by_name(canonical_name)
-    if canonical_name != name:
-        entity_ = Entity.by_name(name)
-        if entity_ is not None:
-            if entity is None:
-                entity = entity_
-                entity_.update(kw)
-            else:
-                entity_.delete()
-    if entity is None:
-        entity = Entity.create(kw)
-    return entity
-
-def upsert_person(data):
-    entity = upsert_entity(data.get('canonical_name'), data.get('name'))
-    data['entity'] = entity
-    person = Person.by_name(entity.name)
-    if person is None:
-        person = Person.create(data)
-    else:
-        person.update(data)
-    return person
-
-def upsert_organisation(data):
-    entity = upsert_entity(data.get('canonical_name'), data.get('name'))
-    data['entity'] = entity
-    organisation = Organisation.by_name(entity.name)
-    if organisation is None:
-        organisation = Organisation.create(data)
-    else:
-        organisation.update(data)
-    return organisation
 
 def upsert_category(id, name, parent=None):
     data = {'id': id, 'name': name, 'parent': parent}
@@ -64,21 +20,6 @@ def upsert_category(id, name, parent=None):
     else:
         category.update(data)
     return category
-
-def make_countries(engine):
-    log.debug("Create country reference data in production...")
-    for country in get_countries():
-        data = {'code': country.get('iso2').strip(),
-                'name': country.get('country')}
-        if not data['code']:
-            continue
-        country = Country.by_code(data['code'])
-        if country is None:
-            country = Country.create(data)
-        else:
-            country.update(data)
-    db.session.commit()
-
 
 def load_representative(engine, rep):
     entity = upsert_entity(rep.get('canonical_name'), 
@@ -196,7 +137,6 @@ def load_representative(engine, rep):
 
 
 def load(engine):
-    make_countries(engine)
     for rep in sl.all(engine, sl.get_table(engine, 'representative')):
         log.info("Loading: %s", rep.get('name'))
         if rep['etl_clean'] is False:
@@ -207,3 +147,4 @@ def load(engine):
 if __name__ == '__main__':
     engine = etl_engine()
     load(engine)
+
