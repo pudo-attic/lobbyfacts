@@ -6,3 +6,9 @@ from openinterests.model.category import Category
 from openinterests.model.person import Person, Accreditation
 from openinterests.model.organisation import Organisation, OrganisationMembership
 from openinterests.model.financial_data import FinancialData, FinancialTurnover
+
+from openinterests.model.reports import test_report
+
+REPORTS = {
+    'test_report': test_report
+    }
