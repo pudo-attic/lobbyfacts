@@ -17,7 +17,7 @@ logging.getLogger('requests').setLevel(level=logging.WARN)
 
 app = Flask(__name__)
 app.config.from_object(default_settings)
-app.config.from_envvar('SETTINGS', silent=True)
+app.config.from_envvar('OPENINTERESTS_SETTINGS', silent=True)
 
 db = SQLAlchemy(app)
 
