@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
-import json
+import json, csv
+from StringIO import StringIO
 from functools import update_wrapper
 from hashlib import sha1
 
@@ -8,10 +9,11 @@ from werkzeug.exceptions import NotFound
 from werkzeug.http import is_resource_modified
 #from formencode.variabledecode import NestedVariables
 from flask import Response, request, current_app, make_response
-
+from flask import stream_with_context
 
 MIME_TYPES = {
         'text/html': 'html',
+        'text/csv': 'csv',
         'application/xhtml+xml': 'html',
         'application/json': 'json',
         'text/javascript': 'json',
@@ -75,23 +77,51 @@ def jsonify(obj, status=200, headers=None, shallow=False):
     return Response(jsondata, headers=headers,
                     status=status, mimetype='application/json')
 
+def stream_csv(source, headers=None, status=200, filename=None):
+    def generate_csv():
+        headers = None
+        for entry in source:
+            row = {}
+            for k, v in entry.items():
+                if v == None:
+                    v = ""
+                if isinstance(v, (list, tuple, dict)):
+                    continue
+                elif isinstance(v, datetime):
+                    v = v.isoformat()
+                elif isinstance(v, float):
+                    v = u'%.2f' % v
+                row[unicode(k).encode('utf8')] = unicode(v).encode('utf8')
+            sio = StringIO()
+            writer = csv.writer(sio)
+            if headers is None:
+                headers = row.keys()
+                writer.writerow(headers)
+            writer.writerow([row.get(k) for k in headers])
+            yield sio.getvalue()
+    if filename:
+        headers = headers if headers is not None else {}
+        headers['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    return Response(stream_with_context(generate_csv()), headers=headers,
+                    status=status, mimetype='text/csv')
 
 # quite hackish:
-def _response_format_from_path(app, request):
+def _response_format_from_path(request):
     # This means: using <format> for anything but dot-notation is really
     # a bad idea here.
-    adapter = app.create_url_adapter(request)
+    adapter = current_app.create_url_adapter(request)
     try:
         return adapter.match()[1].get('format')
     except NotFound:
         return None
 
 
-def response_format(app, request):
+def response_format(request):
     """  Use HTTP Accept headers (and suffix workarounds) to
     determine the representation format to be sent to the client.
     """
-    fmt = _response_format_from_path(app, request)
+    fmt = _response_format_from_path(request)
     if fmt in MIME_TYPES.values():
         return fmt
     neg = request.accept_mimetypes.best_match(MIME_TYPES.keys())

@@ -3,6 +3,7 @@ from flask import render_template, flash
 
 from openinterests.exc import NotFound
 from openinterests.util import jsonify, validate_cache
+from openinterests.util import response_format, stream_csv
 
 def arg_int(name, default=None):
     try:
@@ -29,9 +30,21 @@ def make_entity_api(cls):
         args.extend([('limit', limit), ('offset', offset)])
         return url_for(r, _external=True, **dict(args))
 
+    @api.route('/%s.<format>' % name)
     @api.route('/%s' % name)
-    def index():
+    def index(format=None):
         q = cls.all()
+
+        format = response_format(request)
+        if format == 'csv':
+            def generate():
+                for entity in q:
+                    if hasattr(entity, 'as_shallow'):
+                        yield entity.as_shallow()
+                    else:
+                        yield entity.as_dict()
+            return stream_csv(generate(), filename="%s.csv" % name)
+
         count = q.count()
         limit = get_limit()
         q = q.limit(limit)
