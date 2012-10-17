@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import json, csv
 from StringIO import StringIO
+from decimal import Decimal
 from functools import update_wrapper
 from hashlib import sha1
 
@@ -64,6 +65,8 @@ class JSONEncoder(json.JSONEncoder):
             return obj.as_dict()
         if isinstance(obj, datetime):
             return obj.isoformat()
+        if isinstance(obj, Decimal):
+            return float(obj)
         if isinstance(obj, Query):
             return list(obj)
         raise TypeError("%r is not JSON serializable" % obj)
