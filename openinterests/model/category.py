@@ -7,8 +7,8 @@ from openinterests.model.api import ApiEntityMixIn
 class Category(db.Model, ApiEntityMixIn):
     __tablename__ = 'category'
 
-    id = db.Column(db.Integer, primary_key=True)
-    parent_id = db.Column(db.Integer, db.ForeignKey('category.id'),
+    id = db.Column(db.BigInteger, primary_key=True)
+    parent_id = db.Column(db.BigInteger, db.ForeignKey('category.id'),
             nullable=True)
     name = db.Column(db.Unicode)
 

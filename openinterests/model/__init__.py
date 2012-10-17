@@ -7,8 +7,12 @@ from openinterests.model.person import Person, Accreditation
 from openinterests.model.organisation import Organisation, OrganisationMembership
 from openinterests.model.financial_data import FinancialData, FinancialTurnover
 
-from openinterests.model.reports import test_report
+from openinterests.model.reports import test_report, rep_by_exp, rep_by_country
+from openinterests.model.reports import rep_by_turnover
 
 REPORTS = {
-    'test_report': test_report
+    'test_report': test_report,
+    'rep_by_exp': rep_by_exp,
+    'rep_by_country': rep_by_country,
+    'rep_by_turnover': rep_by_turnover
     }

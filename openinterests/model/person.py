@@ -6,8 +6,13 @@ from openinterests.model.representative import Representative
 
 class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'person'
+    __table_args__ = (
+        db.ForeignKeyConstraint(['entity_id', 'entity_serial'],
+                                ['entity.id', 'entity.serial']),
+        {})
 
-    entity_id = db.Column(db.String(36), db.ForeignKey('entity.id'))
+    entity_id = db.Column(db.String(36))
+    entity_serial = db.Column(db.BigInteger)
 
     title = db.Column(db.Unicode)
     first_name = db.Column(db.Unicode)
@@ -17,6 +22,7 @@ class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
     def update_values(self, data):
         self.entity_id = data.get('entity').id
+        self.entity_serial = data.get('entity').serial
 
         self.title = data.get('title')
         self.first_name = data.get('first_name')
@@ -59,47 +65,58 @@ class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 Entity.person = db.relationship(Person,
         primaryjoin=db.and_(Entity.id == Person.entity_id,
-                            Entity.current == True),
+                            Entity.serial == Person.entity_serial),
         uselist=False,
         backref=db.backref('entity'))
 
 
 Person.representatives_head = db.relationship('Representative', 
             primaryjoin=db.and_(Representative.head_id==Person.id,
-                                Representative.current==True),
+                                Representative.head_serial==Person.serial),
             foreign_keys=[Person.id],
             lazy='dynamic',
             backref=db.backref('head',
                 uselist=False,
                 primaryjoin=db.and_(Representative.head_id==Person.id,
-                                    Person.current==True)
+                                    Representative.head_serial==Person.serial)
                 ))
 
 
 Person.representatives_legal = db.relationship('Representative', 
             primaryjoin=db.and_(Representative.legal_id==Person.id,
-                                Representative.current==True),
+                                Representative.legal_serial==Person.serial),
             foreign_keys=[Person.id],
             lazy='dynamic',
             backref=db.backref('legal',
                 uselist=False,
                 primaryjoin=db.and_(Representative.legal_id==Person.id,
-                                    Person.current==True)
+                                    Representative.legal_serial==Person.serial)
                 ))
 
 
 class Accreditation(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'accreditation'
+    __table_args__ = (
+        db.ForeignKeyConstraint(['representative_id', 'representative_serial'],
+                                ['representative.id', 'representative.serial']),
+        db.ForeignKeyConstraint(['person_id', 'person_serial'],
+                                ['person.id', 'person.serial']),
+        {})
 
-    representative_id = db.Column(db.String(36), db.ForeignKey('representative.id'))
-    person_id = db.Column(db.String(36), db.ForeignKey('person.id'))
+    representative_id = db.Column(db.String(36))
+    representative_serial = db.Column(db.BigInteger())
+
+    person_id = db.Column(db.String(36))
+    person_serial = db.Column(db.BigInteger())
 
     start_date = db.Column(db.DateTime)
     end_date = db.Column(db.DateTime)
 
     def update_values(self, data):
         self.representative_id = data.get('representative').id
+        self.representative_serial = data.get('representative').serial
         self.person_id = data.get('person').id
+        self.person_serial = data.get('person').serial
 
         self.start_date = data.get('start_date')
         self.end_date = data.get('end_date')
@@ -131,13 +148,13 @@ class Accreditation(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 Accreditation.person = db.relationship(Person,
         primaryjoin=db.and_(Person.id == Accreditation.person_id,
-                            Person.current == True),
+                            Person.serial == Accreditation.person_serial),
         uselist=False,
         backref=db.backref('accreditations'))
 
 Accreditation.representative = db.relationship(Representative,
         primaryjoin=db.and_(Representative.id == Accreditation.representative_id,
-                            Representative.current == True),
+                            Representative.serial == Accreditation.representative_serial),
         uselist=False,
         backref=db.backref('accreditations'))
 

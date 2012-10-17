@@ -10,13 +10,19 @@ from openinterests.model.representative import Representative
 
 class Organisation(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'organisation'
+    __table_args__ = (
+        db.ForeignKeyConstraint(['entity_id', 'entity_serial'],
+                                ['entity.id', 'entity.serial']),
+        {})
 
-    entity_id = db.Column(db.String(36), db.ForeignKey('entity.id'))
-    number_of_members = db.Column(db.Integer, nullable=True)
-
+    entity_id = db.Column(db.String(36))
+    entity_serial = db.Column(db.BigInteger)
+    number_of_members = db.Column(db.BigInteger, nullable=True)
 
     def update_values(self, data):
-        self.entity = data.get('entity')
+        self.entity_id = data.get('entity').id
+        self.entity_serial = data.get('entity').serial
+
         self.number_of_members = data.get('number_of_members')
 
     @classmethod
@@ -50,16 +56,24 @@ class Organisation(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 Entity.organisation = db.relationship(Organisation,
         primaryjoin=db.and_(Entity.id == Organisation.entity_id,
-                            Entity.current == True),
+                            Entity.serial == Organisation.entity_serial),
         uselist=False,
         backref=db.backref('entity'))
 
 
 class OrganisationMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'organisation_membership'
+    __table_args__ = (
+        db.ForeignKeyConstraint(['organisation_id', 'organisation_serial'],
+                                ['organisation.id', 'organisation.serial']),
+        db.ForeignKeyConstraint(['representative_id', 'representative_serial'],
+                                ['representative.id', 'representative.serial']),
+        {})
 
-    organisation_id = db.Column(db.String(36), db.ForeignKey('organisation.id'))
-    representative_id = db.Column(db.String(36), db.ForeignKey('representative.id'))
+    organisation_id = db.Column(db.String(36))
+    organisation_serial = db.Column(db.BigInteger())
+    representative_id = db.Column(db.String(36))
+    representative_serial = db.Column(db.BigInteger())
 
     def update_values(self, data):
         self.organisation = data.get('organisation')
@@ -90,21 +104,21 @@ class OrganisationMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 OrganisationMembership.organisation = db.relationship(Organisation,
         primaryjoin=db.and_(Organisation.id == OrganisationMembership.organisation_id,
-                            Organisation.current == True),
+                            Organisation.serial == OrganisationMembership.organisation_serial),
         uselist=False,
         backref=db.backref('memberships',
             lazy='dynamic',
             primaryjoin=db.and_(Organisation.id == OrganisationMembership.organisation_id,
-                                OrganisationMembership.current == True),
+                                Organisation.serial == OrganisationMembership.organisation_serial),
             ))
 
 OrganisationMembership.representative = db.relationship(Representative,
         primaryjoin=db.and_(Representative.id == OrganisationMembership.representative_id,
-                            Representative.current == True),
+                            Representative.serial == OrganisationMembership.representative_serial),
         uselist=False,
         backref=db.backref('organisation_memberships',
             lazy='dynamic',
             primaryjoin=db.and_(Representative.id == OrganisationMembership.representative_id,
-                                OrganisationMembership.current == True),
+                                Representative.serial == OrganisationMembership.representative_serial),
             ))
 

@@ -3,12 +3,22 @@ from openinterests.model.api import ApiEntityMixIn
 from openinterests.model.revision import RevisionedMixIn
 from openinterests.model.entity import Entity
 
+
 class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'representative'
+    __table_args__ = (
+        db.ForeignKeyConstraint(['entity_id', 'entity_serial'],
+                                ['entity.id', 'entity.serial']),
+        db.ForeignKeyConstraint(['head_id', 'head_serial'],
+                                ['person.id', 'person.serial']),
+        db.ForeignKeyConstraint(['legal_id', 'legal_serial'],
+                                ['person.id', 'person.serial']),
+        {})
 
-    entity_id = db.Column(db.String(36), db.ForeignKey('entity.id'))
+    entity_id = db.Column(db.String(36))
+    entity_serial = db.Column(db.BigInteger)
 
-    identitfication_code = db.Column(db.Unicode)
+    identification_code = db.Column(db.Unicode)
 
     goals = db.Column(db.Unicode)
     activities = db.Column(db.Unicode)
@@ -18,9 +28,9 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     code_of_conduct = db.Column(db.Unicode)
     web_site_url = db.Column(db.Unicode)
 
-    members = db.Column(db.Integer, nullable=True)
-    number_of_natural_persons = db.Column(db.Integer, nullable=True)
-    number_of_organisations = db.Column(db.Integer, nullable=True)
+    members = db.Column(db.BigInteger, nullable=True)
+    number_of_natural_persons = db.Column(db.BigInteger, nullable=True)
+    number_of_organisations = db.Column(db.BigInteger, nullable=True)
 
     registration_date = db.Column(db.DateTime)
     last_update_date = db.Column(db.DateTime)
@@ -32,12 +42,14 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     contact_phone = db.Column(db.Unicode)
     contact_post_code = db.Column(db.Unicode)
     contact_fax = db.Column(db.Unicode)
-    contact_country_id = db.Column(db.Integer, db.ForeignKey('country.id'))
+    contact_country_id = db.Column(db.BigInteger, db.ForeignKey('country.id'))
 
-    main_category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    sub_category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    head_id = db.Column(db.Unicode(36), db.ForeignKey('person.id'))
-    legal_id = db.Column(db.Unicode(36), db.ForeignKey('person.id'))
+    main_category_id = db.Column(db.BigInteger, db.ForeignKey('category.id'))
+    sub_category_id = db.Column(db.BigInteger, db.ForeignKey('category.id'))
+    head_id = db.Column(db.Unicode(36))
+    head_serial = db.Column(db.BigInteger)
+    legal_id = db.Column(db.Unicode(36))
+    legal_serial = db.Column(db.BigInteger)
 
     def update_values(self, data):
         self.entity = data.get('entity')
@@ -71,19 +83,21 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.sub_category = data.get('sub_category')
 
         self.head_id = data.get('head').id
+        self.head_serial = data.get('head').serial
         self.legal_id = data.get('legal').id
+        self.legal_serial = data.get('legal').serial
 
     @classmethod
-    def by_identification_code(cls, identitfication_code):
-        return cls.by_attr(cls.identitfication_code,
-                           identitfication_code)
+    def by_identification_code(cls, identification_code):
+        return cls.by_attr(cls.identification_code,
+                           identification_code)
 
     def as_shallow(self):
         d = super(Representative, self).as_dict()
         d.update({
             'uri': self.uri,
             'name': self.entity.name,
-            'identitfication_code': self.identitfication_code,
+            'identification_code': self.identification_code,
             'goals': self.goals,
             'status': self.status,
             'activities': self.activities,
@@ -126,7 +140,7 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 Entity.representative = db.relationship(Representative,
         primaryjoin=db.and_(Entity.id == Representative.entity_id,
-                            Entity.current == True),
+                            Entity.serial == Representative.entity_serial),
         uselist=False,
         backref=db.backref('entity'))
 

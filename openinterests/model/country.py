@@ -9,7 +9,7 @@ from openinterests.model.representative import Representative
 class Country(db.Model, ApiEntityMixIn):
     __tablename__ = 'country'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
 
     code = db.Column(db.Unicode)
     name = db.Column(db.Unicode)
@@ -70,9 +70,14 @@ class Country(db.Model, ApiEntityMixIn):
 
 class CountryMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'country_membership'
+    __table_args__ = (
+        db.ForeignKeyConstraint(['representative_id', 'representative_serial'],
+                                ['representative.id', 'representative.serial']),
+        {})
 
-    representative_id = db.Column(db.String(36), db.ForeignKey('representative.id'))
-    country_id = db.Column(db.String(36), db.ForeignKey('country.id'))
+    representative_id = db.Column(db.String(36))
+    representative_serial = db.Column(db.BigInteger())
+    country_id = db.Column(db.BigInteger(), db.ForeignKey('country.id'))
 
     def update_values(self, data):
         self.representative = data.get('representative')
