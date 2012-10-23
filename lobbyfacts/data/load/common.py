@@ -1,9 +1,9 @@
 import logging
 
-from openinterests.core import db
-from openinterests.data import etl_engine
-from openinterests.data.lib.countries import get_countries
-from openinterests.model import Country
+from lobbyfacts.core import db
+from lobbyfacts.data import etl_engine
+from lobbyfacts.data.lib.countries import get_countries
+from lobbyfacts.model import Country
 
 log = logging.getLogger(__name__)
 

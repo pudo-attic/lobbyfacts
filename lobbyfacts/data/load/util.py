@@ -1,6 +1,6 @@
 import logging
 
-from openinterests.model import Entity, Person, Organisation
+from lobbyfacts.model import Entity, Person, Organisation
 
 log = logging.getLogger(__name__)
 

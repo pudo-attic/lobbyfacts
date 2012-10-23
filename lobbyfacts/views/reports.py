@@ -1,10 +1,10 @@
 from flask import Blueprint, request, redirect, url_for
 import inspect
 
-from openinterests.exc import NotFound
-from openinterests.model import REPORTS
-from openinterests.util import jsonify, validate_cache
-from openinterests.views.util import get_limit, get_offset, paged_url
+from lobbyfacts.exc import NotFound
+from lobbyfacts.model import REPORTS
+from lobbyfacts.util import jsonify, validate_cache
+from lobbyfacts.views.util import get_limit, get_offset, paged_url
 
 reports = Blueprint('reports', 'reports')
 

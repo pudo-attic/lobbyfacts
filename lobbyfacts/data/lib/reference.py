@@ -1,6 +1,6 @@
 from nkclient import NKDataset, NKInvalid, NKNoMatch
 
-from openinterests.core import app
+from lobbyfacts.core import app
 
 DATASET_CACHE = {}
 VALUE_CACHE = {}

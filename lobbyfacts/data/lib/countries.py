@@ -1,6 +1,6 @@
 import csv
 
-from openinterests.core import app
+from lobbyfacts.core import app
 
 COUNTRIES = []
 

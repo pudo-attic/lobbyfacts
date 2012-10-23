@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from openinterests.core import db
-from openinterests.model.util import make_serial, make_id
+from lobbyfacts.core import db
+from lobbyfacts.model.util import make_serial, make_id
 
 class RevisionedMixIn(object):
     """ Simple versioning system for the database graph objects.

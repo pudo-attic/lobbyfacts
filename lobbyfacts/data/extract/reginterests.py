@@ -4,7 +4,7 @@ from pprint import pprint
 import logging
 
 import requests
-from openinterests.data import sl, etl_engine
+from lobbyfacts.data import sl, etl_engine
 
 log = logging.getLogger(__name__)
 

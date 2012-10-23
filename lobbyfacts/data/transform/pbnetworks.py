@@ -5,8 +5,8 @@ from collections import defaultdict
 
 import pbclient
 
-from openinterests.core import app as flask_app
-from openinterests.data import sl, etl_engine
+from lobbyfacts.core import app as flask_app
+from lobbyfacts.data import sl, etl_engine
 
 QUORUM = 1
 

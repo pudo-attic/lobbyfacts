@@ -1,14 +1,14 @@
 import logging
 from pprint import pprint
 
-from openinterests.core import db
-from openinterests.data import sl, etl_engine
-from openinterests.model import Entity, Representative, Country, Category
-from openinterests.model import Organisation, OrganisationMembership, Person
-from openinterests.model import Accreditation, FinancialData, FinancialTurnover
-from openinterests.model import CountryMembership
-from openinterests.data.load.util import to_integer, upsert_person
-from openinterests.data.load.util import upsert_person, upsert_organisation, upsert_entity
+from lobbyfacts.core import db
+from lobbyfacts.data import sl, etl_engine
+from lobbyfacts.model import Entity, Representative, Country, Category
+from lobbyfacts.model import Organisation, OrganisationMembership, Person
+from lobbyfacts.model import Accreditation, FinancialData, FinancialTurnover
+from lobbyfacts.model import CountryMembership
+from lobbyfacts.data.load.util import to_integer, upsert_person
+from lobbyfacts.data.load.util import upsert_person, upsert_organisation, upsert_entity
 
 log = logging.getLogger(__name__)
 

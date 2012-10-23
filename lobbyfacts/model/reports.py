@@ -1,13 +1,13 @@
 from sqlalchemy.sql.expression import nullslast
 
-from openinterests.core import db
+from lobbyfacts.core import db
 
-from openinterests.model.entity import Entity
-from openinterests.model.country import Country
-from openinterests.model.category import Category
-from openinterests.model.representative import Representative
-from openinterests.model.financial_data import FinancialData
-from openinterests.model.person import Accreditation
+from lobbyfacts.model.entity import Entity
+from lobbyfacts.model.country import Country
+from lobbyfacts.model.category import Category
+from lobbyfacts.model.representative import Representative
+from lobbyfacts.model.financial_data import FinancialData
+from lobbyfacts.model.person import Accreditation
 
 def _greatest():
     return db.func.greatest

@@ -1,8 +1,8 @@
-from openinterests.core import db
-from openinterests.model.api import ApiEntityMixIn
-from openinterests.model.revision import RevisionedMixIn
-from openinterests.model.entity import Entity
-from openinterests.model.representative import Representative
+from lobbyfacts.core import db
+from lobbyfacts.model.api import ApiEntityMixIn
+from lobbyfacts.model.revision import RevisionedMixIn
+from lobbyfacts.model.entity import Entity
+from lobbyfacts.model.representative import Representative
 
 class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'person'

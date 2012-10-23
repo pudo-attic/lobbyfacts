@@ -1,6 +1,6 @@
-from openinterests.core import db
-from openinterests.model.api import ApiEntityMixIn
-from openinterests.model.revision import RevisionedMixIn
+from lobbyfacts.core import db
+from lobbyfacts.model.api import ApiEntityMixIn
+from lobbyfacts.model.revision import RevisionedMixIn
 
 
 class Entity(db.Model, RevisionedMixIn, ApiEntityMixIn):

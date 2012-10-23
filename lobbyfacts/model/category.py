@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from openinterests.core import db
-from openinterests.model import util
-from openinterests.model.api import ApiEntityMixIn
+from lobbyfacts.core import db
+from lobbyfacts.model import util
+from lobbyfacts.model.api import ApiEntityMixIn
 
 class Category(db.Model, ApiEntityMixIn):
     __tablename__ = 'category'

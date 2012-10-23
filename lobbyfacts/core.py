@@ -9,7 +9,7 @@ import logging
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
-from openinterests import default_settings
+from lobbyfacts import default_settings
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger('sqlaload').setLevel(level=logging.WARN)

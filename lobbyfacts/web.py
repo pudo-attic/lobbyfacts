@@ -1,10 +1,10 @@
 from flask import Response, request, render_template
 from hashlib import sha1
 
-from openinterests.core import app
-from openinterests.util import NotModified, response_format
-from openinterests.util import validate_cache, jsonify
-from openinterests.views import *
+from lobbyfacts.core import app
+from lobbyfacts.util import NotModified, response_format
+from lobbyfacts.util import validate_cache, jsonify
+from lobbyfacts.views import *
 
 @app.after_request
 def configure_caching(response_class):

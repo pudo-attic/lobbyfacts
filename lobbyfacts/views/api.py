@@ -1,9 +1,9 @@
 from flask import Blueprint, request, redirect, url_for
 
-from openinterests.exc import NotFound
-from openinterests.util import jsonify, validate_cache
-from openinterests.util import response_format, stream_csv
-from openinterests.views.util import get_limit, get_offset, paged_url
+from lobbyfacts.exc import NotFound
+from lobbyfacts.util import jsonify, validate_cache
+from lobbyfacts.util import response_format, stream_csv
+from lobbyfacts.views.util import get_limit, get_offset, paged_url
 
 def make_entity_api(cls):
     name = cls.__tablename__

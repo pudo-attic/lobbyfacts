@@ -1,9 +1,9 @@
 from pprint import pprint
 import logging
 
-from openinterests.data import sl, etl_engine
-from openinterests.data.lib.reference import canonical
-from openinterests.data.lib.countries import country_by_name
+from lobbyfacts.data import sl, etl_engine
+from lobbyfacts.data.lib.reference import canonical
+from lobbyfacts.data.lib.countries import country_by_name
 
 log = logging.getLogger(__name__)
 
