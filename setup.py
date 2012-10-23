@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='openinterests',
+    name='lobbyfacts-api',
     version='R0',
     description="Data store for European interests data.",
     long_description='',
