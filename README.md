@@ -19,22 +19,22 @@ dependencies:
 
     virtualenv env
     . env/bin/activate
-    git clone https://github.com/pudo/openinterests.git
-    cd openinterests
+    git clone https://github.com/pudo/lobbyfacts.git
+    cd lobbyfacts
     pip install -r requirements.txt
     pip install -e . 
 
 Next, you need to create two databases: ETL and production. Both should 
 be on PostgreSQL:
 
-    createdb -E utf-8 openinterests
-    createdb -E utf-8 openinterests_etl
+    createdb -E utf-8 lobbyfacts
+    createdb -E utf-8 lobbyfacts_etl
 
 Next, you need to create a local settings file by copying the template 
 defaults: 
 
-    cp openinterests/default_settings.py settings.py 
-    export OPENINTERESTS_SETTINGS=settings.py
+    cp lobbyfacts/default_settings.py settings.py 
+    export lobbyfacts_SETTINGS=settings.py
     
 Edit the settings file to configure your database connections. To run
 the full ETL process, you will also need an account and API key on these
@@ -46,7 +46,7 @@ two web services:
 Finally, you can create the production database, including the full
 schema (the ETL schema is created implicitly):
     
-    python openinterests/manage.py createdb
+    python lobbyfacts/manage.py createdb
 
 
 Running the application
@@ -55,14 +55,14 @@ Running the application
 To run the application, you'll use the management script. To extract 
 and prepare data, this sequence of commands is used: 
 
-    python openinterests/manage.py extract
-    python openinterests/manage.py transform
-    python openinterests/manage.py load
+    python lobbyfacts/manage.py extract
+    python lobbyfacts/manage.py transform
+    python lobbyfacts/manage.py load
 
 After having created a production database, the API server can be run
 with this command:
 
-    python openinterests/manage.py runserver
+    python lobbyfacts/manage.py runserver
 
 It will be bound to http://localhost:5000 by default.
 
