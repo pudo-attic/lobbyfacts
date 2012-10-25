@@ -1,1 +1,7 @@
 -e git+https://github.com/PyBossa/pybossa-client#egg=pbclient
+-e git+https://github.com/okfn/sqlaload#egg=sqlaload
+Flask==0.9
+Flask-Script==0.5.1
+Flask-SQLAlchemy==0.16
+psycopg2==2.4.5
+lxml==3.0.1

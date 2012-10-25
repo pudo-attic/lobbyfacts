@@ -1,4 +1,4 @@
-from flaskext.script import Manager
+from flask.ext.script import Manager
 
 from lobbyfacts.core import app, db
 from lobbyfacts.model import *
