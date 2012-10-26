@@ -34,6 +34,7 @@ def make_entity_api(cls):
     @api.route('/%s.<format>' % name)
     @api.route('/%s' % name)
     def index(format=None):
+        request.cache_key['args'] = request.args.items()
         q = filter_query()
 
         format = response_format(request)
@@ -53,8 +54,8 @@ def make_entity_api(cls):
         q = q.offset(offset)
         return jsonify({
             'count': count,
-            'next': paged_url('.index', limit, offset+limit),
-            'previous': paged_url('.index', limit, offset-limit),
+            'next': paged_url('.index', limit, offset+limit) if count > offset else False, 
+            'previous': paged_url('.index', limit, offset-limit) if offset > 0 else False,
             'limit': limit,
             'offset': offset,
             'results': q
