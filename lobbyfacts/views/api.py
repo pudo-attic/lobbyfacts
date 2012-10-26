@@ -1,18 +1,40 @@
+from itertools import groupby
+
 from flask import Blueprint, request, redirect, url_for
 
-from lobbyfacts.exc import NotFound
+from lobbyfacts.model.entity import Entity
+from lobbyfacts.exc import NotFound, BadRequest
 from lobbyfacts.util import jsonify, validate_cache
 from lobbyfacts.util import response_format, stream_csv
 from lobbyfacts.views.util import get_limit, get_offset, paged_url
+
 
 def make_entity_api(cls):
     name = cls.__tablename__
     api = Blueprint(name, name)
 
+    def filter_query():
+        query = cls.all()
+        try:
+            filter_ = [f.split(':', 1) for f in request.args.getlist('filter')]
+            for key, values in groupby(filter_, lambda a: a[0]):
+                attr = getattr(cls, key)
+                clause = db.or_(*[attr == v[1] for v in values])
+                query = query.filter(clause)
+            fts_query = request.args.get('q', '').strip()
+            if len(fts_query) and hasattr(cls, 'entity'):
+                query = query.join(Entity)
+                query = query.filter('entity.full_text @@ plainto_tsquery(:ftsq)')
+                query = query.order_by('ts_rank_cd(entity.full_text, plainto_tsquery(:ftsq)) DESC')
+                query = query.params(ftsq=fts_query)
+            return query
+        except (ValueError, AttributeError, IndexError) as e:
+            raise BadRequest(e)
+
     @api.route('/%s.<format>' % name)
     @api.route('/%s' % name)
     def index(format=None):
-        q = cls.all()
+        q = filter_query()
 
         format = response_format(request)
         if format == 'csv':

@@ -44,6 +44,8 @@ def load():
     load(engine)
     from lobbyfacts.data.load.reginterests import load
     load(engine)
+    from lobbyfacts.model import update_index
+    update_index()
 
 if __name__ == '__main__':
     manager.run()

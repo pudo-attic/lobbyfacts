@@ -41,7 +41,7 @@ class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
         d = super(Person, self).as_dict()
         d.update({
             'uri': self.uri,
-            'name': self.entity.name,
+            'name': self.entity.name if self.entity else None,
             'title': self.title,
             'first_name': self.first_name,
             'last_name': self.last_name,

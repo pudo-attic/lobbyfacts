@@ -16,6 +16,22 @@ def make_serial():
     return int(time() * 1000)
 
 
+class TSVector(UserDefinedType):
+    """Support for PostgreSQL full-text search."""
+
+    def get_col_spec(self):
+        from lobbyfacts.core import db
+        if db.engine.dialect.name == 'postgresql':
+            return 'tsvector'
+        return 'text'
+
+    @classmethod
+    def make_text(cls, bind, text):
+        if bind.engine.dialect.name == 'postgresql':
+            return sql.select([sql.func.to_tsvector(text)], bind=bind).scalar()
+        return text
+
+
 class JSONType(MutableType, TypeDecorator):
     impl = Text
 

@@ -96,7 +96,7 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
         d = super(Representative, self).as_dict()
         d.update({
             'uri': self.uri,
-            'name': self.entity.name,
+            'name': self.entity.name if self.entity else None,
             'identification_code': self.identification_code,
             'goals': self.goals,
             'status': self.status,
