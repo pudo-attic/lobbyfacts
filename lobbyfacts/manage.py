@@ -20,8 +20,8 @@ def extract():
     extract(engine)
     from lobbyfacts.data.extract.regaccredit import extract
     extract(engine)
-    from lobbyfacts.data.extract.regexpert import extract
-    extract(engine)
+    #from lobbyfacts.data.extract.regexpert import extract
+    #extract(engine)
 
 @manager.command
 def transform():
@@ -30,8 +30,8 @@ def transform():
     engine = etl_engine()
     from lobbyfacts.data.transform.categories import transform
     transform(engine)
-    from lobbyfacts.data.transform.pbnetworks import transform
-    transform(engine)
+    #from lobbyfacts.data.transform.pbnetworks import transform
+    #transform(engine)
     from lobbyfacts.data.transform.names import transform
     transform(engine)
 

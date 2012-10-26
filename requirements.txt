@@ -1,4 +1,5 @@
 -e git+https://github.com/PyBossa/pybossa-client#egg=pbclient
+-e git+https://github.com/pudo/nomenklatura-client#egg=nkclient
 -e git+https://github.com/okfn/sqlaload#egg=sqlaload
 Flask==0.9
 Flask-Script==0.5.1

@@ -1,6 +1,10 @@
+import logging
+
 from nkclient import NKDataset, NKInvalid, NKNoMatch
 
 from lobbyfacts.core import app
+
+log = logging.getLogger(__name__)
 
 DATASET_CACHE = {}
 VALUE_CACHE = {}
@@ -36,6 +40,7 @@ def canonical(dataset, value, context={}):
             VALUE_CACHE[(dataset, value)] = ex
 
     res = VALUE_CACHE[(dataset,value)]
+    log.info(" - %s :> %s", value, res)
     if isinstance(res, NKInvalid):
         return None
     if isinstance(res, NKNoMatch):
