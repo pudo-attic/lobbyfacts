@@ -52,13 +52,11 @@ def report(name, format=None):
     if format == 'csv':
         return stream_csv(get_results(q), filename="%s.csv" % name)
 
-
     count = q.count()
     limit = get_limit()
     q = q.limit(limit)
     offset = get_offset()
     q = q.offset(offset)
-
     return jsonify({
         'count': count,
         'next': paged_url('.report', limit, offset+limit, name=name),
