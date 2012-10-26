@@ -17,6 +17,15 @@ def test_report():
     return db.session.query(Entity.id.label('id'),
         Entity.name.label('name'))
 
+def representatives():
+    """ Full list of representatives and their financials. """
+    q = db.session.query(Representative)
+    q = q.join(Entity)
+    q = q.join(FinancialData)
+    q = q.add_entity(Entity)
+    q = q.add_entity(FinancialData)
+    return q
+
 def rep_by_exp(sub_category_id=None):
     """Representatives spending most on lobbying in a subcategory."""
     q = db.session.query(Representative.id,
@@ -91,12 +100,12 @@ def fte_by_subcategory():
     q = db.session.query(Category.id, Category.name)
     q = q.filter(Category.parent_id!=None)
     q = q.join(Representative.sub_category)
-    q = q.join(Accreditation)
+    #q = q.join(Accreditation)
     q = q.group_by(Category.id, Category.name)
     count = db.func.count(Representative.id).label("representatives")
     q = q.add_column(count)
-    accreditations = db.func.count(Accreditation.id).label("accreditations")
-    q = q.add_column(accreditations)
+    #accreditations = db.func.count(Accreditation.id).label("accreditations")
+    #q = q.add_column(accreditations)
     ftes = db.func.sum(Representative.number_of_natural_persons).label("number_of_natural_persons")
     q = q.add_column(ftes)
     return q

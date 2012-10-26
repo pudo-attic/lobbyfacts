@@ -80,21 +80,33 @@ def jsonify(obj, status=200, headers=None, shallow=False):
     return Response(jsondata, headers=headers,
                     status=status, mimetype='application/json')
 
+def csv_type_convert(d, sep='.'):
+    o = {}
+    for k, v in d.items():
+        if v == None:
+            v = ""
+        elif hasattr(v, 'as_shallow'):
+            v = v.as_shallow()
+        elif hasattr(v, 'as_dict'):
+            v = v.as_dict()
+        elif isinstance(v, (list, tuple)):
+            continue
+        elif isinstance(v, datetime):
+            v = v.isoformat()
+        elif isinstance(v, float):
+            v = u'%.2f' % v
+        if isinstance(v, dict):
+            for ik, iv in csv_type_convert(v, sep=sep).items():
+                o[k.encode('utf-8') + sep + ik] = iv
+        else:
+            o[k.encode('utf-8')] = unicode(v).encode('utf-8')
+    return o
+
 def stream_csv(source, headers=None, status=200, filename=None):
     def generate_csv():
         headers = None
         for entry in source:
-            row = {}
-            for k, v in entry.items():
-                if v == None:
-                    v = ""
-                if isinstance(v, (list, tuple, dict)):
-                    continue
-                elif isinstance(v, datetime):
-                    v = v.isoformat()
-                elif isinstance(v, float):
-                    v = u'%.2f' % v
-                row[unicode(k).encode('utf8')] = unicode(v).encode('utf8')
+            row = csv_type_convert(entry)
             sio = StringIO()
             writer = csv.writer(sio)
             if headers is None:
