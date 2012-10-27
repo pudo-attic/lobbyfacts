@@ -1,0 +1,24 @@
+{% extends "layout.tmpl" %}
+
+{% block content %}
+
+<form action="" method="GET">
+  <div class="row">
+    <div class="span12">
+      <input class="span12 input-xlarge" name="q" id="query" />
+    </div>
+  </div>
+</form>
+
+{% include "datatable.tmpl" %}
+
+{% endblock %}
+
+{% block script %}
+<script>
+  $(function() {
+    window.table = LobbyFacts.searchTable($('#table'), $('#query'), $('#filters'), {});
+  });
+</script>
+{% endblock %}
+

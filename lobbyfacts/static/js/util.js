@@ -76,10 +76,10 @@ LobbyFacts.searchTable = function(elem, querybox, filters, options) {
     var query = LobbyFacts.parseQuery(window.location.search.substring(1));
     querybox.val(query.q||'');
     elem.find('thead').hide();
-    var datatable = new Grano.DataTable(elem,
+    var datatable = new LobbyFacts.DataTable(elem,
       {
         makeUrl: function(options) {
-          return LobbyTransparency.apiUrl + options.dataset + '/entities';
+          return LobbyFacts.apiUrl + '/representative';
         },
         extendParams: function(params, options) {
           params.filter = [];
@@ -95,8 +95,8 @@ LobbyFacts.searchTable = function(elem, querybox, filters, options) {
         },
         columnDefs: [{
           aTargets: [0],
-          mDataProp: 'title',
-          fnRender: LobbyTransparency.renderEntity()
+          mDataProp: 'name',
+          fnRender: LobbyFacts.renderEntity()
         }],
         params: _.extend({
             limit: 20,

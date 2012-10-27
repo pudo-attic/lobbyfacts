@@ -59,6 +59,10 @@ def handle_not_modified(exc):
 def index():
     return render_template('index.tmpl')
 
+@app.route('/search')
+def search():
+    return render_template('search.tmpl')
+
 @app.route('/reports/<report>')
 def companies_by_exp(report):
     if report in ['companies_by_exp', 'tradeassoc_by_exp',
