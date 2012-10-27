@@ -72,6 +72,9 @@ def companies_by_exp(report):
         return render_template('reports/%s.tmpl' % report)
     raise NotFound()
 
+@app.route('/docs/entities')
+def docs_entities():
+    return render_template('entities.tmpl')
 
 if __name__ == "__main__":
     app.run(port=5002)
