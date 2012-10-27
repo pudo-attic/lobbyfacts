@@ -1,0 +1,21 @@
+{% extends "reports/report.tmpl" %}
+
+{% block title %}
+  Registered representatives per country
+{% endblock %}
+
+{% block script %}
+  <script>
+    $(function() {
+      window.table = LobbyFacts.makeTable($('#table'), 'rep_by_country',
+          [
+            { field: 'name', title: 'Country of contact', width: '80%'},
+            { field: 'count', title: 'Number'},
+
+          ]
+        );
+    });
+  </script>
+{% endblock %}
+
+

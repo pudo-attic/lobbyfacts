@@ -1,0 +1,20 @@
+{% extends "reports/report.tmpl" %}
+
+{% block title %}
+  Number of lobbyists employed by different categories of interests (FTE)
+{% endblock %}
+
+{% block script %}
+  <script>
+    $(function() {
+      window.table = LobbyFacts.makeTable($('#table'), 'fte_by_subcategory',
+          [
+            { field: 'name', title: 'Category', width: '60%'},
+            { field: 'representatives', title: 'Interests'},
+            { field: 'number_of_natural_persons', title: 'Lobbyists'},
+          ]
+        );
+    });
+  </script>
+{% endblock %}
+

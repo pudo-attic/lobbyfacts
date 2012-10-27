@@ -1,0 +1,31 @@
+{% extends "reports/report.tmpl" %}
+
+{% block title %}
+  TOP N associations (C II: trade, business ans professional associations) with the most lobbyists employed
+{% endblock %}
+
+{% block script %}
+  <script>
+    $(function() {
+      window.table = LobbyFacts.makeTable($('#table'), 'rep_by_fte',
+          [
+              {
+                  field: 'name',
+                  title: 'Trade Association',
+                  render: LobbyFacts.renderEntity(),
+                  width: '50%'
+              },
+              { field: 'contact_country', title: 'Country of contact', width: '20%'},
+              { field: 'number_of_natural_persons', title: 'Representatives'},
+              { field: 'accreditations', title: 'EP Passes'},
+
+          ],
+          {
+              sub_category_id: 24
+          }
+        );
+    });
+  </script>
+{% endblock %}
+
+

@@ -1,7 +1,34 @@
 {% extends "layout.tmpl" %}
 
 {% block content %}
-  <h1>Welcome to the LobbyFacts API Server</h1>
+<h1>Welcome to the LobbyFacts Data API</h1>
+
+
+<div class="row">
+  <div class="span6">
+    <h2>Reporting</h2>
+    <ul>
+      <li>Expenditure:
+        <a href="/reports/companies_by_exp">companies</a>,
+        <a href="/reports/tradeassoc_by_exp">trade associations</a>
+      </li>
+      <li>Turnover:
+        <a href="/reports/consultancies_by_turnover">consultancies</a>,
+        <a href="/reports/lawfirms_by_turnover">law firms</a>
+      </li>
+      <li>Staffing:
+        <a href="/reports/companies_by_fte">companies</a>,
+        <a href="/reports/tradeassocs_by_fte">trade associations</a>,
+        <a href="/reports/ngos_by_fte">non-profits</a>,
+        <a href="/reports/lawfirms_by_fte">law firms</a>
+      </li>
+      <li><a href="/reports/rep_by_country">Interests by country</a></li>
+      <li><a href="/reports/fte_by_category">Staff by category</a></li>
+
+      <li>Reporting Spec: <a href="https://docs.google.com/spreadsheet/ccc?key=0AvC_15ztaUqHdDZpTlhPTWZUdGttZ1BkT0ZzX3lrTHc#gid=0">Requirements</a></li>
+    </ul>
+  </div>
+</div>
 
 {% endblock %}
 
