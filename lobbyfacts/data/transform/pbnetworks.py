@@ -27,7 +27,7 @@ def _iterate(f, *a, **kwargs):
 def setup():
     pbclient.set('endpoint', flask_app.config.get('ETL_PYBOSSA_HOST'))
     pbclient.set('api_key', flask_app.config.get('ETL_PYBOSSA_KEY'))
-    apps = pbclient.find_app(short_name='openinterests-entitymarkup')
+    apps = pbclient.find_app(short_name='lobbyfacts-nee')
     return apps.pop()
 
 def create_tasks(engine):
@@ -85,7 +85,7 @@ def fetch_taskruns(engine):
 
 def transform(engine):
     #flush_taskruns(engine)
-    fetch_taskruns(engine)
+    #fetch_taskruns(engine)
     create_tasks(engine)
 
 if __name__ == '__main__':

@@ -103,7 +103,7 @@ function loadTask(task) {
   $('#save').click(function(e) {
     console.log(matches);
     pybossa.saveTask(task.id, {'matches': matches, 'etl_id': task.info.etl_id}).done( function( data ) {
-      window.location.pathname = "/app/openinterests-entitymarkup/newtask";
+      window.location.pathname = "/app/lobbyfacts-nee/newtask";
     });
   });
   $('#reset').unbind('click');
@@ -120,9 +120,9 @@ var taskId = pybossa.getCurrentTaskId(window.location.pathname);
 if (taskId) {
   fetchTask(taskId);
 } else {
-  pybossa.newTask("openinterests-entitymarkup").done( function( data ) { 
+  pybossa.newTask("lobbyfacts-nee").done( function( data ) { 
     if ( !$.isEmptyObject(data.task) ) {
-      window.location.pathname = "/app/openinterests-entitymarkup/task/" + data.task.id;
+      window.location.pathname = "/app/lobbyfacts-nee/task/" + data.task.id;
     }
     else {
       $(".skeleton").hide();
