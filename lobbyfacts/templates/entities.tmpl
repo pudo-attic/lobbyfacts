@@ -2,7 +2,74 @@
 
 {% block content %}
   <h1>De-duplication of names</h1>
-
+  
+  <div class="row">
+    <div class="span6">
+  A big part of the data-cleansing required for the LobbyFacts
+  application is to make sure that each entity &mdash; such as 
+  companies, organisations or persons &mdash; are referenced 
+  by only one name throughout the dataset. To accomplish this, 
+  we are creating a 
+    </div>
+    <div class="span6">
+  dynamic dictionary of the known names in 
+  this dataset. The data is managed by a tool called
+  nomenklatura, which allows you to add and edit entries. 
+    </div>
+  </div>
+  <div class="row">
+    <div class="span6">
+      <h2>How-to</h2>
+      <ol>
+        <li>Go to the <a
+href="http://nomenklatura.okfnlabs.org/openinterests-entities">entities
+data</a> on nomenklatura.</li>
+        <li>Sign in to the web site (you need a <a href="http://github.com">GitHub</a>
+        user to sign in, but multiple users can share the account).</li>
+        <li>Click the <em>reconcile</em> button to start matching entities.</li>
+        <li>When presented with a new name, you have the following
+        options:<ul>
+          <li>If the name is an alias of an existing entity, select the matching
+          entry from the list and save the result.</li>
+          <li>If the name is obviously not a valid entity (such as the
+          text "not applicable"), select <em>Invalid value</em> from the bottom 
+          of the screen.</li>
+          <li>Otherwise, click the checkbox next to the text area to create a
+          new dictionary entry. You can edit the text box content to
+          apply name normalizations (see the rules).</li>
+        </ul></li>
+        <li>Press <em>Save &amp; Next</em>, repeat :)</li>
+      </ol>
+    </div>
+    <div class="span6">
+      <h2>Game rules</h2>
+      <ul>
+        <li>We're trying to come to a normalized name form. It is:
+          <ul>
+            <li><code>Name [Legal Form] ([Acronym])</code></li>
+            <li>Examples:<ul>
+              <li>Bund Deutscher Industrieller e.V. (BDI)</li>
+              <li>Friends of the Earth Europe (FoEE)</li>
+            </ul></li>
+          </ul>
+        </li>
+        <li>Apply the normal form even if not doing it sounds
+        better.</li>
+        <li>Don't overinterpret it. If something is a three-letter
+        acronym for which  multiple interpretations exist - let's
+        leave it for the moment.</li>
+        <li>If something has a French/German/... and an English
+        name, let's use the English one even if it is less commonly
+        used.</li>
+        <li>This is not a place for politics. If A is a sock puppet
+        for Y, leave them separate - we will find another way to
+        express this.</li>
+        <li>The goal is to join legal entities. Brussels offices
+        are separate from their companies if they are incorporated
+        separately (e.g. AmCham vs. AmCham EU).</li>
+      </ul>
+    </div>
+  </div>
 {% endblock %}
 
 
