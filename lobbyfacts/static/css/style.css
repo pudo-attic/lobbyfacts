@@ -1,0 +1,10 @@
+
+.partners {
+  text-align: right;
+}
+
+.partners a {
+  display: inline-block;
+  margin-left: 2em;
+}
+

@@ -55,7 +55,6 @@ def handle_not_modified(exc):
 
 
 @app.route('/')
-@app.route('/<path:any>')
 def index(any=''):
     return render_template('index.tmpl')
 
