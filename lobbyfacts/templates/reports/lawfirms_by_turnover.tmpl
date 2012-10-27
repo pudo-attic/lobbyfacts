@@ -1,0 +1,33 @@
+{% extends "reports/report.tmpl" %}
+
+{% block title %}
+  TOP N law firms (C I) with the biggest lobbying turnover
+{% endblock %}
+
+{% block script %}
+  <script>
+    $(function() {
+      window.table = LobbyFacts.makeTable($('#table'), 'rep_by_turnover',
+          [
+              {
+                  field: 'name',
+                  title: 'Law firm',
+                  render: LobbyFacts.renderEntity(),
+                  width: '70%'
+              },
+              { field: 'contact_country', title: 'Country of contact', width: '20%'},
+              { field: 'turnover', title: 'Turnover', render: LobbyFacts.renderAmount()},
+
+          ],
+          {
+              sub_category_id: 11
+          }
+        );
+    });
+  </script>
+{% endblock %}
+
+
+
+
+

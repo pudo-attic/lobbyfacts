@@ -61,7 +61,8 @@ def index():
 
 @app.route('/reports/<report>')
 def companies_by_exp(report):
-    if report in ['companies_by_exp', 'tradeassoc_by_exp']:
+    if report in ['companies_by_exp', 'tradeassoc_by_exp',
+        'consultancies_by_turnover', 'lawfirms_by_turnover']:
         return render_template('reports/%s.tmpl' % report)
     raise NotFound()
 
