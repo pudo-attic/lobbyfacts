@@ -12,11 +12,10 @@ var LobbyFacts = LobbyFacts || {};
 
     DataTable.prototype.options = {
       source: 'http://localhost:5000/api/1',
-      dataset: 'eutr',
-      query: 'test',
+      report: 'test_report',
       makeUrl: function(options) {
-        var apiUrl = options.source + options.dataset + '/queries/';
-        return apiUrl + options.query + '/run';
+        var apiUrl = options.source + '/reports/';
+        return apiUrl + options.report;
       },
       extendParams: function(params, options) {
         return params;

@@ -8,3 +8,26 @@
   margin-left: 2em;
 }
 
+.lobbyfacts table.dataTable tr.even {
+  background-color: transparent;
+}
+
+.lobbyfacts table.dataTable tr.odd {
+  background-color: #3A3A3A;
+}
+
+.lobbyfacts .table td, .lobbyfacts .table th {
+  border-top: 1px solid #666;
+}
+
+.lobbyfacts table.dataTable thead th {
+  border-bottom: 1px solid #666;
+}
+
+.pagination ul > li > a:hover, .pagination ul > .active > a, .pagination ul > .active > span {
+  background-color: #3A3A3A;
+}
+
+.pagination ul > li > a, .pagination ul > li > span { 
+  background-color: #2A2A2A;
+}

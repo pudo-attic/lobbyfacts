@@ -2,6 +2,7 @@ from flask import Response, request, render_template
 from hashlib import sha1
 
 from lobbyfacts.core import app
+from lobbyfacts.exc import NotFound
 from lobbyfacts.util import NotModified, response_format
 from lobbyfacts.util import validate_cache, jsonify
 from lobbyfacts.views import *
@@ -39,7 +40,7 @@ def setup_cache():
 @app.errorhandler(500)
 def handle_exceptions(exc):
     """ Re-format exceptions to JSON if accept requires that. """
-    format = response_format(app, request)
+    format = response_format(request)
     if format == 'json':
         body = {'status': exc.code,
                 'name': exc.name,
@@ -55,8 +56,14 @@ def handle_not_modified(exc):
 
 
 @app.route('/')
-def index(any=''):
+def index():
     return render_template('index.tmpl')
+
+@app.route('/reports/<report>')
+def companies_by_exp(report):
+    if report in ['companies_by_exp', 'tradeassoc_by_exp']:
+        return render_template('reports/%s.tmpl' % report)
+    raise NotFound()
 
 
 if __name__ == "__main__":

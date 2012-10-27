@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <title>LobbyFacts.eu</title>
+    <title>{% block title %}LobbyFacts.eu{% endblock %}</title>
 
     <!-- Bootstrap -->
     <link href="http://assets.okfn.org/p/labs/201210/css/bootstrap.css" rel="stylesheet">
@@ -31,7 +31,7 @@
     <link rel="alternate" type="application/atom+xml" title="Follow the Open Data Labs Blog." href="http://okfnlabs.org/blog/feed.xml" />
     <link rel="shortcut icon" href="http://assets.okfn.org/p/okfn/img/favicon.ico">
   </head>
-  <body class="body-data">
+  <body class="body-data lobbyfacts">
 	<header>
     <div class="container">
       <div class="logo">
@@ -77,6 +77,10 @@
   <script src="/static/js/lib/jquery.format.min.js"></script>
   <script src="/static/js/util.js"></script>
   <script src="/static/js/table.js"></script>
+  <script>
+    var LobbyFacts = LobbyFacts || {};
+    LobbyFacts.apiUrl = '{{ url_for("index", _external=True) }}api/1';
+  </script>
 
   {% block script %}
   {% endblock %}

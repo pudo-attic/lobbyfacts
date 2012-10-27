@@ -1,0 +1,29 @@
+{% extends "reports/report.tmpl" %}
+
+{% block title %}
+  TOP N companies (C II: companies and groups) spending most on lobbying
+{% endblock %}
+
+{% block script %}
+  <script>
+    $(function() {
+      window.table = LobbyFacts.makeTable($('#table'), 'rep_by_exp',
+          [
+              {
+                  field: 'name',
+                  title: 'Company',
+                  render: LobbyFacts.renderEntity(),
+                  width: '70%'
+              },
+              { field: 'contact_country', title: 'Country of contact', width: '20%'},
+              { field: 'cost', title: 'Expenditure', render: LobbyFacts.renderAmount()},
+
+          ],
+          {
+              sub_category_id: 21
+          }
+        );
+    });
+  </script>
+{% endblock %}
+

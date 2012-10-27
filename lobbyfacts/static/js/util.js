@@ -28,8 +28,9 @@ LobbyFacts.entityUrl = function(id) {
 
 LobbyFacts.renderEntity = function(idProp, titleProp) {
     return function(coll, obj) {
-        var url = LobbyFacts.entityUrl(coll.aData[idProp||'id']);
-        return "<a href='" + url + "'>" + coll.aData[titleProp||'title'] + "</a>";
+        return coll.aData[titleProp||'name']
+        //var url = LobbyFacts.entityUrl(coll.aData[idProp||'id']);
+        //return "<a href='" + url + "'>" + coll.aData[titleProp||'name'] + "</a>";
     };
 };
 
@@ -41,7 +42,7 @@ LobbyFacts.renderAmount = function(foo) {
     };
 };
 
-LobbyFacts.makeTable = function(elem, queryName, columns, options) {
+LobbyFacts.makeTable = function(elem, report, columns, options) {
     var headers = elem.find('thead tr');
     var columnDefs = [];
     headers.empty();
@@ -57,7 +58,7 @@ LobbyFacts.makeTable = function(elem, queryName, columns, options) {
     return new LobbyFacts.DataTable(elem,
       {
         source: LobbyFacts.apiUrl,
-        query: queryName,
+        report: report,
         columnDefs: columnDefs,
         params: _.extend({
             limit: 20,
