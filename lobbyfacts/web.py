@@ -76,5 +76,9 @@ def companies_by_exp(report):
 def docs_entities():
     return render_template('entities.tmpl')
 
+@app.route('/docs/api')
+def docs_api():
+    return render_template('api.tmpl')
+
 if __name__ == "__main__":
     app.run(port=5002)

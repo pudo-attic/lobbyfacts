@@ -1,0 +1,34 @@
+
+
+{% extends "layout.tmpl" %}
+
+{% block content %}
+  <h1>API Documentation</h1>
+  
+<div class="row">
+  <div class="span6">
+    <h3>Introduction</h3>
+    <p>The API for LobbyFacts is made to allow easy access to up-to-date,
+    structured information about registered interests, persons and other 
+    organisations.</p>
+
+    <p>It provides both entity-centric access which can be used to find
+    and retrieve data about individual data items as well as a reporting
+    interface which exposes pre-defined views of the data, including 
+    aggregated overviews per country etc.</p>
+  </div>
+  <div class="span6">
+    <h3>Conventions</h3>
+    <p>A few simple conventions apply throughout the API:</p>
+    <ul>
+      <li>All data is accessible as JSON, no other formats are supported.</li>
+      <li>JSONP is accessible by adding a <code>callback=</code> argument to
+      each request</li>
+      <li>Once the site is in prototype operation, all data will be updated 
+      every day. Requests have cache headers, so some data may not update
+      unless you cache-bust.</li>
+    </ul>
+  </div>
+</div>
+
+{% endblock %}
