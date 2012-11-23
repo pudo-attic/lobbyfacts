@@ -21,7 +21,7 @@
     <h3>Conventions</h3>
     <p>A few simple conventions apply throughout the API:</p>
     <ul>
-      <li>All data is accessible as JSON, no other formats are supported.</li>
+      <li>All data is accessible as JSON, some data is also available as CSV.</li>
       <li>JSONP is accessible by adding a <code>callback=</code> argument to
       each request</li>
       <li>Once the site is in prototype operation, all data will be updated 
@@ -31,4 +31,43 @@
   </div>
 </div>
 
+<h2>Entities</h2>
+<div class="row">
+  <div class="span6">
+    <p>
+    The API exposes a number of entities. For each domain entity, there are
+    two operations: <code>index</code> and <code>view</code>.
+    </p>
+    <p> The
+    <code>view</code> action will return a <em>deep</em> representation
+    of the specified entity, which often contains <em>shallow</em> 
+    representations of associated objects.</p>
+    <ul><li>Example: <a href="/api/1/country/1">/api/1/country/1</a> (JSON)</li></ul>
+    </p>
+    <p>For <code>index</code> pages, a <em>shallow</em> representation of
+    the data is returned, containing no associated entities and a limited 
+    set of attributes. Users can set an <code>Accept</code>
+    header to <code>text/csv</code> or add <code>.csv</code> to the URL
+    to retrieve a CSV-encoded form of the data.
+    </p>
+    <ul><li>Example: <a href="/api/1/country">/api/1/country</a> (JSON)</li></ul>
+  </div>
+  <div class="span6">
+    <p>
+    The <code>index</code> operation supports a number of query parameters:
+    </p>
+    <ul>
+      <li><code>limit</code> (default: 50, maximum 500) limits the number of
+      entries returned in a single page.</li>
+      <li><code>offset</code> (default: 0) specifies the number of records to
+      skip before returning a set of entries.</li>
+      <li><code>filter</code> can be specified multiple times. The value of
+      the argument has the format <code>field:value</code>, i.e. the specified
+      value applied as a filter to the given field.</li>
+      <li>Some entities, such as representatives, persons and organisations
+      also support the <code>q</code> parameter, which will perform a full-text
+      search of the data, looking for the specified terms.</p>
+    </ul>
+  </div>
+</div>
 {% endblock %}
