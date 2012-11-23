@@ -43,7 +43,7 @@ def transform(engine):
 
     names_func = lambda v, c: canonical(DATASET, v, context=c)
     map_names(names_func, engine, 'representative')
-    map_names(names_func, engine, 'person')
+    #map_names(names_func, engine, 'person')
     map_names(names_func, engine, 'financial_data_turnover')
     map_names(names_func, engine, 'organisation')
     map_names(names_func, engine, 'network_entity')
