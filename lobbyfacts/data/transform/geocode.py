@@ -14,6 +14,8 @@ def transform(engine):
     table = sl.get_table(engine, 'representative')
     for row in sl.all(engine, table):
         out = {'id': row['id']}
+        if row.get('contact_lon'):
+            continue
         query = {
             'format': 'json',
             'limit': 1,
@@ -23,7 +25,7 @@ def transform(engine):
             'postalcode': row.get('contact_post_code')
             }
         response = requests.get(URL, params=query)
-        if len(response.json):
+        if response.json and len(response.json):
             geo = response.json[0]
             log.info("%s @ %s", row.get('name'), geo.get('display_name'))
             out['contact_geoname'] = geo.get('display_name')
