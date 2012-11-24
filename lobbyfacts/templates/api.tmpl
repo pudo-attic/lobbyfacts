@@ -27,6 +27,10 @@
       <li>Once the site is in prototype operation, all data will be updated 
       every day. Requests have cache headers, so some data may not update
       unless you cache-bust.</li>
+      <li>The API aims to provide URIs for further data in many places. This 
+      includes ready-made API links for pagination and entity URIs which can 
+      be used to retrieve the full data for any <em>shallow</em> object returned
+      by the API.</li>
     </ul>
   </div>
 </div>
@@ -68,6 +72,85 @@
       also support the <code>q</code> parameter, which will perform a full-text
       search of the data, looking for the specified terms.</p>
     </ul>
+  </div>
+</div>
+<div class="row">
+  <div class="span6">
+    <h3>Entity</h3>
+    <p>Entities represent unique actors represented in the database. They mainly 
+    exist to deduplicate and link between different types of records, such as a 
+    <code>representative</code>, a <code>person</code> or some other domain object
+    which refer to the same physical thing.</p>
+    <ul><li>Index: <a href="/api/1/entity">/api/1/entity</a> (JSON)</li></ul>
+  </div>
+  <div class="span6">
+    <h3>Representative</h3>
+    <p>Representatives are the companies, trade associations or lobbying firms
+    which are registered in the lobby register. Most other information is in some
+    way linked to them. They have a 1:1 relationship to <code>entity</code>.</p>
+    <ul><li>Index: <a href="/api/1/representative">/api/1/representative</a> (JSON)</li></ul>
+  </div>
+</div>
+<div class="row">
+  <div class="span6">
+    <h3>Person</h3>
+    <p>
+      Individuals appear either as legal contact or head of a <code>representative</code>, 
+      or through an <code>accreditation</code>, which permits them to enter the 
+      European Parliament. Persons have a 1:1 link to <code>entity</code>.
+    </p>
+    <ul><li>Index: <a href="/api/1/person">/api/1/person</a> (JSON)</li></ul>
+  </div>
+  <div class="span6">
+    <h3>Category</h3>
+    <p>
+      Categories reflect the type of a particular <code>represenative</code>. They have two 
+      levels, and categories on the second level link up to the more general group.
+    </p>
+    <ul><li>Index: <a href="/api/1/category">/api/1/category</a> (JSON)</li></ul>
+  </div>
+</div>
+<div class="row">
+  <div class="span6">
+    <h3>Organisations</h3>
+    <p>
+      Organisations are not well specified, but they can represent the clients or members of 
+      a <code>representative</code>. They have a 1:1 relationship to <code>entity</code>
+    </p>
+    <ul><li>Index: <a href="/api/1/organisation">/api/1/organisation</a> (JSON)</li></ul>
+  </div>
+  <div class="span6">
+    <h3>Country</h3>
+    <p>
+      Each <code>represenative</code> has a contact country, which is the place from where its
+      lobbying operation is run (thus not necessarily the location of its headquarters).
+    </p>
+    <ul><li>Index: <a href="/api/1/country">/api/1/country</a> (JSON)</li></ul>
+  </div>
+</div>
+<div class="row">
+  <div class="span6">
+    <h3>Financial Data</h3>
+    <p>
+      A <code>represenative</code> has to make a financial statement detailing its 
+      revenues and expenses on lobbying activities once a year. Different fields on 
+      this are set for companies, NGO and law firms.
+    </p>
+    <ul><li>Index: <a href="/api/1/financial_data">/api/1/financial_data</a> (JSON)</li></ul>
+  </div>
+  <div class="span6">
+    <h3>Accreditation</h3>
+    <p>
+      A <code>represenative</code> can have multiple <code>persons</code> associated with it
+      that are authorized to enter the European Parliament as lobbyists. 
+    </p>
+    <ul><li>Index: <a href="/api/1/accreditation">/api/1/accreditation</a> (JSON)</li></ul>
+  </div>
+</div>
+<div class="row">
+  <div class="span12">
+    Some other domain objects exist, but they work mainly as many to many join tables and 
+    can be discovered by looking at the JSON output of those objects documented here.
   </div>
 </div>
 {% endblock %}
