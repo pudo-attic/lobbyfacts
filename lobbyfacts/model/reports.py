@@ -26,6 +26,22 @@ def representatives():
     q = q.add_entity(FinancialData)
     return q
 
+def places():
+    """ Abridged version of representatives and locations. """
+    q = db.session.query(Representative.id,
+            Representative.identification_code,
+            Representative.contact_town,
+            Representative.contact_street)
+    q = q.join(Entity)
+    q = q.join(Country)
+    q = q.join(FinancialData)
+    q = q.add_column(Entity.name)
+    q = q.add_column(FinancialData.turnover_min)
+    q = q.add_column(FinancialData.turnover_max)
+    q = q.add_column(FinancialData.turnover_absolute)
+    q = q.add_column(Country.name.label("country"))
+    return q
+
 def rep_by_exp(sub_category_id=None):
     """Representatives spending most on lobbying in a subcategory."""
     q = db.session.query(Representative.id,

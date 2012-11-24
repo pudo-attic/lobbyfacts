@@ -9,13 +9,14 @@ from lobbyfacts.model.organisation import Organisation, OrganisationMembership
 from lobbyfacts.model.financial_data import FinancialData, FinancialTurnover
 
 from lobbyfacts.model.reports import test_report, rep_by_exp, rep_by_country
-from lobbyfacts.model.reports import representatives
+from lobbyfacts.model.reports import representatives, places
 from lobbyfacts.model.reports import rep_by_turnover, rep_by_fte, fte_by_subcategory
 
 log = logging.getLogger(__name__)
 
 REPORTS = {
     'test_report': test_report,
+    'places': places,
     'representatives': representatives,
     'rep_by_exp': rep_by_exp,
     'rep_by_country': rep_by_country,

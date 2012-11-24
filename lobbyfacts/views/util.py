@@ -8,7 +8,7 @@ def arg_int(name, default=None):
         return default
 
 def get_limit(default=50):
-    return max(0, min(500, arg_int('limit', default=default)))
+    return max(0, min(50000, arg_int('limit', default=default)))
 
 def get_offset(default=0):
     return max(0, arg_int('offset', default=default))
