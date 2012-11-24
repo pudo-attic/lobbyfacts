@@ -10,7 +10,7 @@ from lobbyfacts.data import sl, etl_engine
 
 log = logging.getLogger(__name__)
 
-URL = 'http://ec.europa.eu/transparency/regexpert/search_results_groups.cfm?page=%s'
+URL = 'http://ec.europa.eu/transparency/regexpert/index.cfm?do=search.result&page=%s'
 
 FIELDS = {
         'Task': 'task',
@@ -47,14 +47,14 @@ def scrape_group(url):
     data['title'] = gdetails.find('.//div[@class="col1"]').text.strip()
     data['identifier'] = data['title'].rsplit('(', 1)[-1].replace(')', '')
     data['status'] = gdetails.find('.//div/span').text
-    data['status_note'] = gdetails.find('.//div[@id="statusNote"]/p').text.strip()
+    #data['status_note'] = gdetails.find('.//div[@id="statusNote"]/p').text.strip()
     log.info("Scraping: %s", data['title'])
     details = gdetails.find('.//*[@id="details"]')
     label = None
     data.update(pseudotable(details))
     data['last_updated'] = datetime.strptime(data['last_updated'], "%d %b %Y")
     try:
-        data['active_since'] = datetime.strptime(data['active_since'], "%d/%m/%y")
+        data['active_since'] = datetime.strptime(data['active_since'], "%d %b %Y")
     except:
         try:
             data['active_since'] = datetime.strptime(data['active_since'], "%Y")
@@ -100,6 +100,7 @@ def scrape_group(url):
         m = scrape_member(urljoin(URL, list_a.get('href')))
         data['members'].append(m)
 
+    #pprint(data)
     return data
 
 def scrape_index():
