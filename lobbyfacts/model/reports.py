@@ -31,7 +31,9 @@ def places():
     q = db.session.query(Representative.id,
             Representative.identification_code,
             Representative.contact_town,
-            Representative.contact_street)
+            Representative.contact_street,
+            Representative.contact_lon,
+            Representative.contact_lat)
     q = q.join(Entity)
     q = q.join(Country)
     q = q.join(FinancialData)

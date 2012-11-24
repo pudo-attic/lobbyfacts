@@ -42,6 +42,8 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     contact_phone = db.Column(db.Unicode)
     contact_post_code = db.Column(db.Unicode)
     contact_fax = db.Column(db.Unicode)
+    contact_lat = db.Column(db.Float)
+    contact_lon = db.Column(db.Float)
     contact_country_id = db.Column(db.BigInteger, db.ForeignKey('country.id'))
 
     main_category_id = db.Column(db.BigInteger, db.ForeignKey('category.id'))
@@ -77,6 +79,8 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.contact_phone = data.get('contact_phone')
         self.contact_post_code = data.get('contact_post_code')
         self.contact_fax = data.get('contact_fax')
+        self.contact_lon = data.get('contact_lon')
+        self.contact_lat = data.get('contact_lat')
         self.contact_country = data.get('contact_country')
 
         self.main_category = data.get('main_category')
@@ -115,6 +119,8 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
             'contact_number': self.contact_number,
             'contact_street': self.contact_street,
             'contact_phone': self.contact_phone,
+            'contact_lon': self.contact_lon,
+            'contact_lat': self.contact_lat,
             'contact_post_code': self.contact_post_code,
             'contact_fax': self.contact_fax
             })
