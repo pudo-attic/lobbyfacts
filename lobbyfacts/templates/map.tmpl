@@ -1,0 +1,78 @@
+{% extends "layout.tmpl" %}
+
+{% block content %}
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4/leaflet.css" />
+ <!--[if lte IE 8]>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4/leaflet.ie.css" />
+ <![endif]-->
+    <style>
+      #map { height: 500px; }
+    </style>
+   <div id="map"></div>
+{% endblock %}
+
+{% block script %}
+<script src="http://cdn.leafletjs.com/leaflet-0.4/leaflet.js"></script>
+<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.0"></script>
+<script>
+  $(function() {
+    var runningTasks = 0;
+    var taskOffset = 0;
+    var map = L.map('map').setView([50.85, 4.36], 6);
+    var makePlot = function(data, r) {
+      return function(nom) {
+        var spot = nom[0];
+        //var r = data.results[offset];
+        if (spot != undefined) {
+          console.log(r);
+          var rad = Math.log(r.turnover_absolute || r.turnover_max || 500) * 2;
+          console.log(rad);
+          var marker = L.circleMarker([spot.lat, spot.lon], {
+            color: 'blue',
+            stroke: false,
+            fillOpacity: 0.2
+          }).addTo(map);
+          marker.setRadius(rad);
+          marker.bindPopup("<a href='http://ec.europa.eu/transparencyregister/public/consultation/displaylobbyist.do?id="+r.identification_code+"'>"+r.name+"</a> ("+r.contact_town+")")
+        }
+        runningTasks--;
+        geoCode(data);
+      }
+    }
+  
+    var geoCode = function(data) {
+      for (; runningTasks < 40; runningTasks++) {
+        if (data.results.length < taskOffset) {
+          return;
+        }
+        var res = data.results[taskOffset];
+        var offset = taskOffset;
+        taskOffset++;
+        $.ajax({
+          url: 'http://open.mapquestapi.com/nominatim/v1/search',
+          dataType: 'jsonp',
+          cache: true,
+          jsonp: 'json_callback',
+          data: {
+            format: 'json',
+            limit: 1,
+            q: res.contact_street + ', ' + res.contact_town + ', ' + res.country
+          },
+          success: makePlot(data, res)
+        });
+      }
+    }
+  
+    $.ajax({
+      url: 'http://localhost:5000/api/1/reports/places?limit=7000',
+      dataType: 'jsonp',
+      cache: false,
+      success: geoCode,
+      });
+    var layer = new L.StamenTileLayer("toner");
+    map.addLayer(layer);
+  });
+</script>
+{% endblock %}
+
+

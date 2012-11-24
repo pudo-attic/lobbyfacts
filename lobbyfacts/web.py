@@ -80,5 +80,9 @@ def docs_entities():
 def docs_api():
     return render_template('api.tmpl')
 
+@app.route('/map')
+def map():
+    
+    return render_template('map.tmpl')
 if __name__ == "__main__":
     app.run(port=5002)

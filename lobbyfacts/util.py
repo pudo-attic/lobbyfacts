@@ -18,6 +18,8 @@ MIME_TYPES = {
         'application/xhtml+xml': 'html',
         'application/json': 'json',
         'text/javascript': 'json',
+        'application/ecmascript': 'json',
+        'application/x-ecmascript': 'json'
         }
 
 def request_format(request):
