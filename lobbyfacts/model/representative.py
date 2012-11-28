@@ -132,8 +132,6 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
         return "<Representative(%s,%r)>" % (self.id, self.entity)
 
 Entity.representative = db.relationship(Representative,
-        #primaryjoin=db.and_(Entity.id == Representative.entity_id,
-        #                    Entity.serial == Representative.entity_serial),
         uselist=False,
         backref=db.backref('entity'))
 

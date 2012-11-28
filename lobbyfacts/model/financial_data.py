@@ -31,7 +31,6 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
     end_date = db.Column(db.DateTime)
     type = db.Column(db.Unicode)
 
-
     def update_values(self, data):
         self.representative = data.get('representative')
 
@@ -105,7 +104,6 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 
 Representative.financial_datas = db.relationship(FinancialData,
-            #foreign_keys=[Representative.id],
             lazy='dynamic',
             backref=db.backref('representative',
                 uselist=False,
@@ -153,7 +151,6 @@ class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 
 FinancialData.turnovers = db.relationship('FinancialTurnover', 
-            #foreign_keys=[FinancialData.id],
             lazy='dynamic',
             backref=db.backref('financial_data',
                 uselist=False,
@@ -161,7 +158,6 @@ FinancialData.turnovers = db.relationship('FinancialTurnover',
 
 
 Entity.turnovers = db.relationship('FinancialTurnover',
-            #foreign_keys=[Entity.id],
             lazy='dynamic',
             backref=db.backref('entity',
                 uselist=False,

@@ -4,6 +4,7 @@ from lobbyfacts.model.revision import RevisionedMixIn
 from lobbyfacts.model.entity import Entity
 from lobbyfacts.model.representative import Representative
 
+
 class Person(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'person'
 
@@ -61,9 +62,8 @@ Entity.person = db.relationship(Person,
         backref=db.backref('entity'))
 
 
-Person.representatives_head = db.relationship('Representative', 
+Person.representatives_head = db.relationship('Representative',
             primaryjoin=Representative.head_id==Person.id,
-            #foreign_keys=[Person.id],
             lazy='dynamic',
             backref=db.backref('head',
                 uselist=False,
@@ -73,7 +73,6 @@ Person.representatives_head = db.relationship('Representative',
 
 Person.representatives_legal = db.relationship('Representative', 
             primaryjoin=Representative.legal_id==Person.id,
-            #foreign_keys=[Person.id],
             lazy='dynamic',
             backref=db.backref('legal',
                 uselist=False,
@@ -122,14 +121,10 @@ class Accreditation(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 
 Accreditation.person = db.relationship(Person,
-        #primaryjoin=db.and_(Person.id == Accreditation.person_id,
-        #                    Person.serial == Accreditation.person_serial),
         uselist=False,
         backref=db.backref('accreditations'))
 
 Accreditation.representative = db.relationship(Representative,
-        #primaryjoin=db.and_(Representative.id == Accreditation.representative_id,
-        #                    Representative.serial == Accreditation.representative_serial),
         uselist=False,
         backref=db.backref('accreditations'))
 
