@@ -2,60 +2,72 @@ from datetime import datetime
 
 from lobbyfacts.core import db
 from lobbyfacts.model.util import make_serial, make_id
+from lobbyfacts.model.util import ReadJSONType, JSONEncoder
 
-class RevisionedMixIn(object):
-    """ Simple versioning system for the database graph objects.
-    This is based upon multiple objects sharing the smae ID, but
-    differing in their serial number. Additionally, a ``current``
-    flag is used to flag that revision of a given edge or node
-    that should currently be used. """
+class AuditTrail(db.Model):
+    __tablename__ = 'audit_trail'
+
+    CREATE = 'create'
+    UPDATE = 'update'
+    DELETE = 'delete'
+
+    ACTIONS = [CREATE, UPDATE, DELETE]
 
     id = db.Column(db.String(36), primary_key=True, default=make_id)
-    serial = db.Column(db.BigInteger, primary_key=True, default=make_serial)
-    current = db.Column(db.Boolean)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    obj = db.Column(ReadJSONType)
+    obj_id = db.Column(db.String(36))
+    obj_type = db.Column(db.Unicode)
+    action = db.Column(db.Unicode)
+
+    @classmethod
+    def create(cls, obj, action):
+        trail = cls()
+        assert action in cls.ACTIONS, action
+        trail.action = action
+        trail.obj = JSONEncoder().encode(obj.as_dict())
+        trail.obj_id = obj.id
+        trail.obj_type = obj.__tablename__
+        trail.created_at = obj.updated_at
+        db.session.add(trail)
+        return trail
+
+    def __repr__(self):
+        return "<AuditTrail(%s,%s,%s)>" % (self.obj_type, self.obj_id, self.created_at)
+
+    def as_dict(self):
+        return {
+                'id': self.id,
+                'obj': self.obj,
+                'created_at': self.created_at,
+                'action': self.action
+            }
+
+class RevisionedMixIn(object):
+    """ Simple versioning system for the database objects. We are
+    creating an audit trail for each object so that we can 
+    deserialize its history upon demand. """
+
+    id = db.Column(db.String(36), primary_key=True, default=make_id)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime)
 
     @classmethod
     def create(cls, data):
         """ Create a new, versioned object. """
         obj = cls()
         obj.id = make_id()
-        obj._update(None, data)
+        obj.update(data)
         return obj
 
-    def update(self, data, current=True):
-        """ Create a new object as a child of an existing,
-        versioned object while changing the serial number to
-        differentiate the child. """
-        obj = self.__class__()
-        obj.id = self.id
-        return obj._update(self, data)
-
-    def _changed(self, other):
-        if other is None:
-            return True
-        for prop in self.__mapper__.iterate_properties:
-            if prop.key in ['current', 'serial', 'created_at']:
-                continue
-            if getattr(self, prop.key) != getattr(other, prop.key):
-                return True
-        return False
-
-    def _update(self, orig, data, current=True):
+    def update(self, data):
         self.update_values(data)
-        if not self._changed(orig):
-            return
-        self.serial = make_serial()
-        self.current = current
-        if current and self.id:
-            # this is slightly hacky but it cannot
-            # be assumed that the `current` version
-            # is the parent object to the new obj.
-            table = self.__table__
-            q = table.update().where(table.c.id == self.id)
-            q = q.values({'current': False})
-            db.session.execute(q)
-        db.session.add(self)
+        if not self in db.session:
+            db.session.add(self)
+        if db.session.is_modified(self, include_collections=False):
+            self.updated_at = datetime.utcnow()
+            action = AuditTrail.UPDATE if self.created_at else AuditTrail.CREATE
+            AuditTrail.create(self, action)
         db.session.flush()
         return self
 
@@ -63,42 +75,36 @@ class RevisionedMixIn(object):
         raise TypeError()
 
     def delete(self):
-        table = self.__table__
-        q = table.update().where(table.c.id == self.id)
-        q = q.values({'current': False})
-        db.session.execute(q)
+        pass
+
+    def trail(self):
+        q = db.session.query(AuditTrail)
+        q = q.filter(AuditTrail.obj_id==self.id)
+        q = q.filter(AuditTrail.obj_type==self.__tablename__)
+        q = q.order_by(AuditTrail.created_at.desc())
+        return q
 
     def as_dict(self):
         return {
             'id': self.id,
-        #    'serial': self.serial,
-        #    'current': self.current,
-            'created_at': self.created_at
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
             }
-
-    @property
-    def history(self):
-        q = db.session.query(self.__class__)
-        q = q.filter_by(id=self.id)
-        q = q.order_by(self.__class__.created_at.asc())
-        return q
 
     @classmethod
     def by_attr(cls, attr, value):
         q = db.session.query(cls)
-        q = q.filter_by(current=True)
         q = q.filter(attr==value)
         return q.first()
 
     @classmethod
     def by_id(cls, id):
         q = db.session.query(cls)
-        q = q.filter_by(current=True)
         q = q.filter_by(id=id)
         return q.first()
 
     @classmethod
     def all(cls):
         q = db.session.query(cls)
-        q = q.filter_by(current=True)
         return q
+

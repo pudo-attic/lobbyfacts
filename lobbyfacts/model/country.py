@@ -70,13 +70,12 @@ class Country(db.Model, ApiEntityMixIn):
 
 class CountryMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'country_membership'
-    __table_args__ = (
-        db.ForeignKeyConstraint(['representative_id', 'representative_serial'],
-                                ['representative.id', 'representative.serial']),
-        {})
+    #__table_args__ = (
+    #    db.ForeignKeyConstraint(['representative_id', 'representative_serial'],
+    #                            ['representative.id', 'representative.serial']),
+    #    {})
 
-    representative_id = db.Column(db.String(36))
-    representative_serial = db.Column(db.BigInteger())
+    representative_id = db.Column(db.String(36), db.ForeignKey('representative.id'))
     country_id = db.Column(db.BigInteger(), db.ForeignKey('country.id'))
 
     def update_values(self, data):
@@ -86,7 +85,6 @@ class CountryMembership(db.Model, RevisionedMixIn, ApiEntityMixIn):
     @classmethod
     def by_rpc(cls, representative, country):
         q = db.session.query(cls)
-        q = q.filter_by(current=True)
         q = q.filter(cls.country_id==country.id)
         q = q.filter(cls.representative_id==representative.id)
         return q.first()
@@ -98,18 +96,18 @@ CountryMembership.country = db.relationship(Country,
             primaryjoin=Country.id == CountryMembership.country_id,
             backref=db.backref('memberships',
                 lazy='dynamic',
-                primaryjoin=db.and_(Country.id == CountryMembership.country_id,
-                                    CountryMembership.current == True)
+                #primaryjoin=db.and_(Country.id == CountryMembership.country_id,
+                #                    CountryMembership.current == True)
             ))
 
 CountryMembership.representative = db.relationship(Representative,
-        primaryjoin=db.and_(Representative.id == CountryMembership.representative_id,
-                            Representative.current == True),
+        #primaryjoin=db.and_(Representative.id == CountryMembership.representative_id,
+        #                    Representative.current == True),
         uselist=False,
         backref=db.backref('country_memberships',
             lazy='dynamic',
-            primaryjoin=db.and_(Representative.id == CountryMembership.representative_id,
-                                CountryMembership.current == True),
+            #primaryjoin=db.and_(Representative.id == CountryMembership.representative_id,
+            #                    CountryMembership.current == True),
             ))
 
 

@@ -75,4 +75,12 @@ def make_entity_api(cls):
 
         return jsonify(obj)
 
+    @api.route('/%s/<id>/trail' % name)
+    def trail(id):
+        obj = cls.by_id(id)
+        if obj is None:
+            return NotFound(id)
+
+        return jsonify(obj.trail())
+
     return api

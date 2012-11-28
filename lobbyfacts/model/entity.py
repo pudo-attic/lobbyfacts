@@ -46,7 +46,7 @@ class Entity(db.Model, RevisionedMixIn, ApiEntityMixIn):
                 text.append(unicode(value))
         text = [t for t in text if t is not None]
         return TSVector.make_text(db.engine, " ".join(text))
-        
+
     def __repr__(self):
         return "<Entity(%s,%s)>" % (self.id, self.name.encode('ascii', 'ignore'))
 

@@ -6,13 +6,8 @@ from lobbyfacts.model.representative import Representative
 
 class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'financial_data'
-    __table_args__ = (
-        db.ForeignKeyConstraint(['representative_id', 'representative_serial'],
-                                ['representative.id', 'representative.serial']),
-        {})
 
-    representative_id = db.Column(db.String(36))
-    representative_serial = db.Column(db.BigInteger())
+    representative_id = db.Column(db.String(36), db.ForeignKey('representative.id'))
 
     turnover_min = db.Column(db.BigInteger, nullable=True)
     turnover_max = db.Column(db.BigInteger, nullable=True)
@@ -38,8 +33,7 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 
     def update_values(self, data):
-        self.representative_id = data.get('representative').id
-        self.representative_serial = data.get('representative').serial
+        self.representative = data.get('representative')
 
         self.turnover_min = data.get('turnover_min')
         self.turnover_max = data.get('turnover_max')
@@ -66,7 +60,6 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
     @classmethod
     def by_rsd(cls, representative, start_date):
         q = db.session.query(cls)
-        q = q.filter_by(current=True)
         q = q.filter(cls.representative_id==representative.id)
         q = q.filter(cls.start_date==start_date)
         return q.first()
@@ -112,39 +105,25 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 
 Representative.financial_datas = db.relationship(FinancialData,
-            primaryjoin=db.and_(Representative.id==FinancialData.representative_id,
-                                Representative.serial==FinancialData.representative_serial),
-            foreign_keys=[Representative.id],
+            #foreign_keys=[Representative.id],
             lazy='dynamic',
             backref=db.backref('representative',
                 uselist=False,
-                primaryjoin=db.and_(Representative.id==FinancialData.representative_id,
-                                    Representative.serial==FinancialData.representative_serial)
                 ))
 
 
 class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'financial_turnover'
-    __table_args__ = (
-        db.ForeignKeyConstraint(['financial_data_id', 'financial_data_serial'],
-                                ['financial_data.id', 'financial_data.serial']),
-        db.ForeignKeyConstraint(['entity_id', 'entity_serial'],
-                                ['entity.id', 'entity.serial']),
-        {})
 
-    financial_data_id = db.Column(db.String(36))
-    financial_data_serial = db.Column(db.BigInteger())
-    entity_id = db.Column(db.String(36))
-    entity_serial = db.Column(db.BigInteger())
+    financial_data_id = db.Column(db.String(36), db.ForeignKey('financial_data.id'))
+    entity_id = db.Column(db.String(36), db.ForeignKey('entity.id'))
 
     min = db.Column(db.Integer)
     max = db.Column(db.Integer)
 
     def update_values(self, data):
-        self.financial_data_id = data.get('financial_data').id
-        self.financial_data_serial = data.get('financial_data').serial
-        self.entity_id = data.get('entity').id
-        self.entity_serial = data.get('entity').serial
+        self.financial_data = data.get('financial_data')
+        self.entity = data.get('entity')
 
         self.min = data.get('min')
         self.max = data.get('max')
@@ -152,11 +131,8 @@ class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
     @classmethod
     def by_fde(cls, financial_data, entity):
         q = db.session.query(cls)
-        q = q.filter_by(current=True)
         q = q.filter(cls.financial_data_id==financial_data.id)
-        q = q.filter(cls.financial_data_serial==financial_data.serial)
         q = q.filter(cls.entity_id==entity.id)
-        q = q.filter(cls.entity_serial==entity.serial)
         return q.first()
 
     def as_dict(self, financial_data=True, entity=True):
@@ -177,25 +153,17 @@ class FinancialTurnover(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
 
 FinancialData.turnovers = db.relationship('FinancialTurnover', 
-            primaryjoin=db.and_(FinancialTurnover.financial_data_id==FinancialData.id,
-                                FinancialTurnover.financial_data_serial==FinancialData.serial),
-            foreign_keys=[FinancialData.id],
+            #foreign_keys=[FinancialData.id],
             lazy='dynamic',
             backref=db.backref('financial_data',
                 uselist=False,
-                primaryjoin=db.and_(FinancialTurnover.financial_data_id==FinancialData.id,
-                                    FinancialTurnover.financial_data_serial==FinancialData.serial)
                 ))
 
 
 Entity.turnovers = db.relationship('FinancialTurnover',
-            primaryjoin=db.and_(FinancialTurnover.entity_id==Entity.id,
-                                FinancialTurnover.current==True),
-            foreign_keys=[Entity.id],
+            #foreign_keys=[Entity.id],
             lazy='dynamic',
             backref=db.backref('entity',
                 uselist=False,
-                primaryjoin=db.and_(FinancialTurnover.entity_id==Entity.id,
-                                    Entity.current==True)
                 ))
 

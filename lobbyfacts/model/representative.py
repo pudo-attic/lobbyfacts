@@ -6,17 +6,8 @@ from lobbyfacts.model.entity import Entity
 
 class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'representative'
-    __table_args__ = (
-        db.ForeignKeyConstraint(['entity_id', 'entity_serial'],
-                                ['entity.id', 'entity.serial']),
-        db.ForeignKeyConstraint(['head_id', 'head_serial'],
-                                ['person.id', 'person.serial']),
-        db.ForeignKeyConstraint(['legal_id', 'legal_serial'],
-                                ['person.id', 'person.serial']),
-        {})
 
-    entity_id = db.Column(db.String(36))
-    entity_serial = db.Column(db.BigInteger)
+    entity_id = db.Column(db.String(36), db.ForeignKey('entity.id'))
 
     identification_code = db.Column(db.Unicode)
 
@@ -48,10 +39,8 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
     main_category_id = db.Column(db.BigInteger, db.ForeignKey('category.id'))
     sub_category_id = db.Column(db.BigInteger, db.ForeignKey('category.id'))
-    head_id = db.Column(db.Unicode(36))
-    head_serial = db.Column(db.BigInteger)
-    legal_id = db.Column(db.Unicode(36))
-    legal_serial = db.Column(db.BigInteger)
+    head_id = db.Column(db.Unicode(36), db.ForeignKey('person.id'))
+    legal_id = db.Column(db.Unicode(36), db.ForeignKey('person.id'))
 
     def update_values(self, data):
         self.entity = data.get('entity')
@@ -86,10 +75,8 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.main_category = data.get('main_category')
         self.sub_category = data.get('sub_category')
 
-        self.head_id = data.get('head').id
-        self.head_serial = data.get('head').serial
-        self.legal_id = data.get('legal').id
-        self.legal_serial = data.get('legal').serial
+        self.head = data.get('head')
+        self.legal = data.get('legal')
 
     @classmethod
     def by_identification_code(cls, identification_code):
@@ -145,8 +132,8 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
         return "<Representative(%s,%r)>" % (self.id, self.entity)
 
 Entity.representative = db.relationship(Representative,
-        primaryjoin=db.and_(Entity.id == Representative.entity_id,
-                            Entity.serial == Representative.entity_serial),
+        #primaryjoin=db.and_(Entity.id == Representative.entity_id,
+        #                    Entity.serial == Representative.entity_serial),
         uselist=False,
         backref=db.backref('entity'))
 

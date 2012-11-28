@@ -30,5 +30,5 @@ def update_index():
     for entity in db.session.query(Entity).yield_per(1000):
         log.info("Indexing %s...", entity.name)
         entity.update_index()
-        db.session.add(entity)
+        #db.session.add(entity)
     db.session.commit()
