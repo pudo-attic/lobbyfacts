@@ -36,6 +36,13 @@
           }).addTo(map);
           marker.setRadius(rad);
           marker.bindPopup("<a href='http://ec.europa.eu/transparencyregister/public/consultation/displaylobbyist.do?id="+r.identification_code+"'>"+r.name+"</a> ("+r.contact_town+")")
+          var marker2 = L.circleMarker([r.contact_lat, r.contact_lon], {
+            color: 'blue',
+            stroke: false,
+            fillOpacity: 0.9
+          }).addTo(map);
+          marker2.setRadius(2);
+          marker2.bindPopup("<a href='http://ec.europa.eu/transparencyregister/public/consultation/displaylobbyist.do?id="+r.identification_code+"'>"+r.name+"</a> ("+r.contact_town+")")
         }, randomnumber);
       });
     }
