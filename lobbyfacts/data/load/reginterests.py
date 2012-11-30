@@ -7,7 +7,7 @@ from lobbyfacts.model import Entity, Representative, Country, Category
 from lobbyfacts.model import Organisation, OrganisationMembership, Person
 from lobbyfacts.model import Accreditation, FinancialData, FinancialTurnover
 from lobbyfacts.model import CountryMembership
-from lobbyfacts.data.load.util import to_integer, upsert_person
+from lobbyfacts.data.load.util import to_integer, to_float, upsert_person
 from lobbyfacts.data.load.util import upsert_person, upsert_organisation, upsert_entity
 
 log = logging.getLogger(__name__)
@@ -29,6 +29,9 @@ def load_representative(engine, rep):
     rep['members'] = to_integer(rep['members'])
     rep['number_of_natural_persons'] = to_integer(rep['number_of_natural_persons'])
     rep['number_of_organisations'] = to_integer(rep['number_of_organisations'])
+
+    rep['contact_lat'] = to_float(rep['contact_lat'])
+    rep['contact_lon'] = to_float(rep['contact_lon'])
 
     rep['contact_phone'] = " ".join((rep.get('contact_indic_phone') or '', rep.get('contact_phone') or '')).strip()
     rep['contact_fax'] = " ".join((rep.get('contact_indic_fax') or '', rep.get('contact_fax') or '')).strip()

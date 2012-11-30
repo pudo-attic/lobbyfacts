@@ -12,6 +12,14 @@ def to_integer(val):
     except ValueError:
         return None
 
+def to_float(val):
+    if val is None:
+        return None
+    try:
+        return float(val)
+    except ValueError:
+        return None
+
 def upsert_entity(canonical_name, name=None, **kw):
     if canonical_name is None or not len(canonical_name.strip()):
         canonical_name = name
