@@ -8,6 +8,7 @@ from lobbyfacts.data import sl, etl_engine
 log = logging.getLogger(__name__)
 
 URL = "http://nominatim.openstreetmap.org/search"
+URL = "http://open.mapquestapi.com/nominatim/v1/search.php"
 
 def transform(engine):
     log.info("Geo-coding representatives...")
