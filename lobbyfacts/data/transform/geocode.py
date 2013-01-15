@@ -25,8 +25,9 @@ def transform(engine):
             'postalcode': row.get('contact_post_code')
             }
         response = requests.get(URL, params=query)
-        if response.json and len(response.json):
-            geo = response.json[0]
+        json = response.json()
+        if json and len(json):
+            geo = json[0]
             log.info("%s @ %s", row.get('name'), geo.get('display_name'))
             out['contact_geoname'] = geo.get('display_name')
             out['contact_lon'] = geo.get('lon')
