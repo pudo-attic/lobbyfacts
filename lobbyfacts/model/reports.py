@@ -131,6 +131,7 @@ def fte_by_subcategory():
     q = q.add_column(count)
     #accreditations = db.func.count(Accreditation.id).label("accreditations")
     #q = q.add_column(accreditations)
-    ftes = db.func.sum(Representative.number_of_natural_persons).label("number_of_natural_persons")
+    ftes = db.func.sum(Representative.members).label("members")
+    q = q.order_by(ftes.desc())
     q = q.add_column(ftes)
     return q

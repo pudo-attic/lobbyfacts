@@ -43,6 +43,7 @@ class AuditTrail(db.Model):
                 'action': self.action
             }
 
+
 class RevisionedMixIn(object):
     """ Simple versioning system for the database objects. We are
     creating an audit trail for each object so that we can 
