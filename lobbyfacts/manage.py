@@ -34,6 +34,8 @@ def transform():
     #transform(engine)
     from lobbyfacts.data.transform.names import transform
     transform(engine)
+    from lobbyfacts.data.transform.dedup import transform
+    transform(engine)
     from lobbyfacts.data.transform.geocode import transform
     transform(engine)
 
