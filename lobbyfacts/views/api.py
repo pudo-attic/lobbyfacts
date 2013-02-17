@@ -47,6 +47,7 @@ def make_entity_api(cls):
                 else:
                     pcls = mapper.get_property(facet).mapper.class_
                     query = db.session.query(pcls, count)
+                    query = query.filter(pcls.deleted_at==None)
                     query = query.join(attr)
                     query = query.group_by(pcls.id)
                 query = filter_query(query)

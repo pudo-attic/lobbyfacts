@@ -52,6 +52,7 @@ class RevisionedMixIn(object):
     id = db.Column(db.String(36), primary_key=True, default=make_id)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime)
+    deleted_at = db.Column(db.DateTime)
 
     @classmethod
     def create(cls, data):
@@ -76,6 +77,12 @@ class RevisionedMixIn(object):
         raise TypeError()
 
     def delete(self):
+        if self.deleted_at is not None:
+            return
+        self.deleted_at = datetime.utcnow()
+        self.cascade_delete()
+
+    def cascade_delete(self):
         pass
 
     def trail(self):
@@ -95,17 +102,20 @@ class RevisionedMixIn(object):
     @classmethod
     def by_attr(cls, attr, value):
         q = db.session.query(cls)
+        q = q.filter(cls.deleted_at==None)
         q = q.filter(attr==value)
         return q.first()
 
     @classmethod
     def by_id(cls, id):
         q = db.session.query(cls)
+        q = q.filter(cls.deleted_at==None)
         q = q.filter_by(id=id)
         return q.first()
 
     @classmethod
     def all(cls):
         q = db.session.query(cls)
+        q = q.filter(cls.deleted_at==None)
         return q
 

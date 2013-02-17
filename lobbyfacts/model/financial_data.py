@@ -4,6 +4,7 @@ from lobbyfacts.model.revision import RevisionedMixIn
 from lobbyfacts.model.entity import Entity
 from lobbyfacts.model.representative import Representative
 
+
 class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
     __tablename__ = 'financial_data'
 
@@ -55,6 +56,10 @@ class FinancialData(db.Model, RevisionedMixIn, ApiEntityMixIn):
         self.start_date = data.get('start_date')
         self.end_date = data.get('end_date')
         self.type = data.get('type')
+
+    def cascade_delete(self):
+        for t in self.turnovers:
+            t.delete()
 
     @classmethod
     def by_rsd(cls, representative, start_date):

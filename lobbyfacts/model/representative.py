@@ -44,6 +44,8 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
 
     def update_values(self, data):
         self.entity = data.get('entity')
+        assert self.entity is not None, self.entity
+
         self.identification_code = data.get('identification_code')
 
         self.goals = data.get('goals')
@@ -128,11 +130,18 @@ class Representative(db.Model, RevisionedMixIn, ApiEntityMixIn):
             })
         return d
 
+    def cascade_delete(self):
+        for a in self.accreditations:
+            a.delete()
+        for om in self.organisation_memberships:
+            om.delete()
+        for fd in self.financial_datas:
+            fd.delete()
+
     def __repr__(self):
         return "<Representative(%s,%r)>" % (self.id, self.entity)
 
 Entity.representative = db.relationship(Representative,
-        uselist=False,
-        backref=db.backref('entity'))
+        uselist=False, backref=db.backref('entity'))
 
 

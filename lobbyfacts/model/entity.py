@@ -36,6 +36,16 @@ class Entity(db.Model, RevisionedMixIn, ApiEntityMixIn):
         d['turnovers'] = [ft.as_dict(entity=False) for ft in self.turnovers]
         return d
 
+    def cascade_delete(self):
+        if self.person:
+            self.person.delete()
+        if self.organisation:
+            self.organisation.delete()
+        if self.representative:
+            self.representative.delete()
+        for t in self.turnovers:
+            t.delete()
+
     def as_full_text(self):
         text = [self.name, self.acronym]
         for obj in [self.person, self.organisation,
