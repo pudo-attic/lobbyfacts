@@ -7,5 +7,5 @@ class ApiEntityMixIn(object):
     @property
     def uri(self):
         return url_for('%s.view' % self.__tablename__,
-                id=self.id, _external=False)
+                id=self.id, _external=True)
 
