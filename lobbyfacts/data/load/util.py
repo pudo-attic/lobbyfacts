@@ -20,9 +20,11 @@ def to_float(val):
     except ValueError:
         return None
 
-def upsert_entity(canonical_name, name=None, **kw):
+def upsert_entity(canonical_name, name=None, suffix=None, **kw):
     if canonical_name is None or not len(canonical_name.strip()):
         canonical_name = name
+    if suffix is not None and len(suffix):
+        canonical_name = "%s %s" % (canonical_name, suffix)
     kw['name'] = canonical_name
     entity = Entity.by_name(canonical_name)
     if canonical_name != name:

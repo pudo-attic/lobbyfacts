@@ -22,9 +22,12 @@ def upsert_category(id, name, parent=None):
     return category
 
 def load_representative(engine, rep):
-    entity = upsert_entity(rep.get('canonical_name'), 
-                name=rep.get('original_name'), 
+    entity = upsert_entity(rep.get('canonical_name'),
+                name=rep.get('original_name'),
+                suffix=rep.get('name_suffix'),
                 acronym=rep.get('acronym'))
+    assert entity is not None, entity
+    assert entity.id is not None, entity
     rep['entity'] = entity
     rep['members'] = to_integer(rep['members'])
     rep['number_of_natural_persons'] = to_integer(rep['number_of_natural_persons'])
@@ -102,6 +105,7 @@ def load_representative(engine, rep):
                 continue
             turnover_['entity'] = upsert_entity(turnover_.get('canonical_name'),
                                                 turnover_.get('name'))
+            assert turnover_['entity'] is not None, turnover_['entity']
             turnover_['financial_data'] = financial_data
             turnover_['min'] = to_integer(turnover_.get('min'))
             turnover_['max'] = to_integer(turnover_.get('max'))
