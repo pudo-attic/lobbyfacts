@@ -1,5 +1,5 @@
 -e git+https://github.com/PyBossa/pybossa-client#egg=pbclient
--e git+https://github.com/pudo/nomenklatura-client#egg=nkclient
+pynomenklatura
 sqlaload
 Flask==0.9
 SQLAlchemy==0.7.9
