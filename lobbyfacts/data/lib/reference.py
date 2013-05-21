@@ -38,13 +38,14 @@ def get_dataset(dataset):
     return DATASET_CACHE[dataset]
 
 
-def canonical(dataset, value, context={}):
+def canonical(dataset, value, context={}, readonly=False):
     lvalue = value.lower()
     if not (dataset, lvalue) in NAME_CACHE:
         try:
             ds = get_dataset(dataset)
             value = clean_value(value)
-            v = ds.lookup(value, context=context)
+            v = ds.lookup(value, context=context,
+                          readonly=readonly)
             NAME_CACHE[(dataset, lvalue)] = v
         except Dataset.Invalid, ex:
             NAME_CACHE[(dataset, lvalue)] = ex
