@@ -41,7 +41,8 @@ def transform(engine):
     map_names(countries_func, engine, 'expertgroup_member_country',
             'country', 'country_code')
 
-    names_func = lambda v, c: canonical(DATASET, v, context=c)
+    def names_func(v, c, **kw):
+        canonical(DATASET, v, context=c, **kw)
     map_names(names_func, engine, 'representative')
     #map_names(names_func, engine, 'person')
     map_names(names_func, engine, 'financial_data_turnover')
